@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  # PostgreSQLデータベース
+  db:
+    image: postgres:15
+    container_name: cinetrack_db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-cinetrack}
+      POSTGRES_USER: ${POSTGRES_USER:-cinetrack_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/src/main/resources/db/migration:/docker-entrypoint-initdb.d
+    networks:
+      - cinetrack_network
+
+  # Spring Bootアプリケーション
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: cinetrack_backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-cinetrack}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-cinetrack_user}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      JWT_SECRET: ${JWT_SECRET:-your_jwt_secret_key}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-86400}
+      TMDB_API_KEY: ${TMDB_API_KEY}
+      TMDB_BASE_URL: ${TMDB_BASE_URL:-https://api.themoviedb.org/3}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    networks:
+      - cinetrack_network
+    volumes:
+      - ./backend:/app
+    restart: unless-stopped
+
+  # Reactアプリケーション
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: cinetrack_frontend
+    environment:
+      REACT_APP_API_BASE_URL: ${REACT_APP_API_BASE_URL:-http://localhost:8080/api}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - cinetrack_network
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  cinetrack_network:
+    driver: bridge

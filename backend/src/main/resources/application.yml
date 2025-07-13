@@ -1,0 +1,47 @@
+spring:
+  application:
+    name: cinetrack-backend
+  
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/cinetrack}
+    username: ${SPRING_DATASOURCE_USERNAME:cinetrack_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:password}
+    driver-class-name: org.postgresql.Driver
+    
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
+    
+  security:
+    user:
+      name: admin
+      password: admin
+      
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+# JWT設定
+jwt:
+  secret: ${JWT_SECRET:mySecretKey}
+  expiration: ${JWT_EXPIRATION:86400}
+
+# TMDb API設定
+tmdb:
+  api-key: ${TMDB_API_KEY:your_api_key_here}
+  base-url: ${TMDB_BASE_URL:https://api.themoviedb.org/3}
+  
+# CORS設定
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}
+  
+logging:
+  level:
+    com.cinetrack: DEBUG
+    org.springframework.security: DEBUG
