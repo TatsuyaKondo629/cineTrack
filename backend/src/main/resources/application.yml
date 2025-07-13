@@ -34,7 +34,7 @@ jwt:
 
 # TMDb API設定
 tmdb:
-  api-key: ${TMDB_API_KEY:your_api_key_here}
+  api-key: ${TMDB_API_KEY:your_actual_tmdb_api_key_here}
   base-url: ${TMDB_BASE_URL:https://api.themoviedb.org/3}
   
 # CORS設定

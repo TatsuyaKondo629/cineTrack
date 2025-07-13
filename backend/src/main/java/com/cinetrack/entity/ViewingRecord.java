@@ -1,11 +1,9 @@
 package com.cinetrack.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.DecimalMax;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -18,30 +16,44 @@ public class ViewingRecord {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonBackReference
     private User user;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "movie_id", nullable = false)
-    private Movie movie;
+    @Column(name = "tmdb_movie_id", nullable = false)
+    @NotNull(message = "Movie ID is required")
+    private Long tmdbMovieId;
     
-    @NotNull
-    @DecimalMin(value = "0.0")
-    @DecimalMax(value = "5.0")
-    @Column(precision = 2, scale = 1)
-    private BigDecimal rating;
+    @Column(name = "movie_title", nullable = false)
+    @NotBlank(message = "Movie title is required")
+    @Size(max = 255, message = "Movie title must be less than 255 characters")
+    private String movieTitle;
     
-    @Column(name = "viewed_at")
-    private LocalDateTime viewedAt;
+    @Column(name = "movie_poster_path")
+    private String moviePosterPath;
     
+    @Column(name = "viewing_date", nullable = false)
+    @NotNull(message = "Viewing date is required")
+    private LocalDateTime viewingDate;
+    
+    @Column(name = "rating", nullable = false)
+    @NotNull(message = "Rating is required")
+    @DecimalMin(value = "0.5", message = "Rating must be at least 0.5")
+    @DecimalMax(value = "5.0", message = "Rating must be at most 5.0")
+    private Double rating;
+    
+    @Column(name = "theater")
+    @Size(max = 255, message = "Theater name must be less than 255 characters")
     private String theater;
     
     @Column(name = "screening_format")
+    @Size(max = 50, message = "Screening format must be less than 50 characters")
     private String screeningFormat;
     
-    @Column(columnDefinition = "TEXT")
-    private String notes;
+    @Column(name = "review", columnDefinition = "TEXT")
+    @Size(max = 2000, message = "Review must be less than 2000 characters")
+    private String review;
     
-    @Column(name = "created_at")
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
     
     @Column(name = "updated_at")
@@ -56,6 +68,16 @@ public class ViewingRecord {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+    
+    public ViewingRecord() {}
+    
+    public ViewingRecord(User user, Long tmdbMovieId, String movieTitle, LocalDateTime viewingDate, Double rating) {
+        this.user = user;
+        this.tmdbMovieId = tmdbMovieId;
+        this.movieTitle = movieTitle;
+        this.viewingDate = viewingDate;
+        this.rating = rating;
     }
     
     // Getters and Setters
@@ -75,28 +97,44 @@ public class ViewingRecord {
         this.user = user;
     }
     
-    public Movie getMovie() {
-        return movie;
+    public Long getTmdbMovieId() {
+        return tmdbMovieId;
     }
     
-    public void setMovie(Movie movie) {
-        this.movie = movie;
+    public void setTmdbMovieId(Long tmdbMovieId) {
+        this.tmdbMovieId = tmdbMovieId;
     }
     
-    public BigDecimal getRating() {
+    public String getMovieTitle() {
+        return movieTitle;
+    }
+    
+    public void setMovieTitle(String movieTitle) {
+        this.movieTitle = movieTitle;
+    }
+    
+    public String getMoviePosterPath() {
+        return moviePosterPath;
+    }
+    
+    public void setMoviePosterPath(String moviePosterPath) {
+        this.moviePosterPath = moviePosterPath;
+    }
+    
+    public LocalDateTime getViewingDate() {
+        return viewingDate;
+    }
+    
+    public void setViewingDate(LocalDateTime viewingDate) {
+        this.viewingDate = viewingDate;
+    }
+    
+    public Double getRating() {
         return rating;
     }
     
-    public void setRating(BigDecimal rating) {
+    public void setRating(Double rating) {
         this.rating = rating;
-    }
-    
-    public LocalDateTime getViewedAt() {
-        return viewedAt;
-    }
-    
-    public void setViewedAt(LocalDateTime viewedAt) {
-        this.viewedAt = viewedAt;
     }
     
     public String getTheater() {
@@ -115,12 +153,12 @@ public class ViewingRecord {
         this.screeningFormat = screeningFormat;
     }
     
-    public String getNotes() {
-        return notes;
+    public String getReview() {
+        return review;
     }
     
-    public void setNotes(String notes) {
-        this.notes = notes;
+    public void setReview(String review) {
+        this.review = review;
     }
     
     public LocalDateTime getCreatedAt() {

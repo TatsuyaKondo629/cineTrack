@@ -34,21 +34,24 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<AuthResponse>> login(@Valid @RequestBody LoginRequest loginRequest) {
         try {
+            // メールアドレスからユーザー名を取得
+            User user = userService.findByEmail(loginRequest.getEmail())
+                .orElseThrow(() -> new BadCredentialsException("Invalid email or password"));
+            
             Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
+                new UsernamePasswordAuthenticationToken(user.getUsername(), loginRequest.getPassword())
             );
             
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             String jwt = jwtUtil.generateToken(userDetails);
             
-            User user = userService.findByUsername(loginRequest.getUsername()).get();
             AuthResponse authResponse = new AuthResponse(jwt, user.getUsername(), user.getEmail());
             
             return ResponseEntity.ok(ApiResponse.success("Login successful", authResponse));
             
         } catch (BadCredentialsException e) {
             return ResponseEntity.badRequest()
-                .body(ApiResponse.error("Invalid username or password"));
+                .body(ApiResponse.error("Invalid email or password"));
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
                 .body(ApiResponse.error("Login failed: " + e.getMessage()));
