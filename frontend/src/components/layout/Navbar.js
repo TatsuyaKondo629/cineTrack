@@ -28,6 +28,7 @@ import {
   Search as SearchIcon,
   Login as LoginIcon,
   PersonAdd as PersonAddIcon,
+  Favorite as FavoriteIcon,
   Analytics as AnalyticsIcon
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -77,6 +78,7 @@ const Navbar = () => {
     ...(isAuthenticated ? [
       { text: 'ダッシュボード', path: '/dashboard', icon: <DashboardIcon /> },
       { text: '視聴記録', path: '/viewing-records', icon: <ListIcon /> },
+      { text: 'ウィッシュリスト', path: '/wishlist', icon: <FavoriteIcon /> },
       { text: '統計・分析', path: '/statistics', icon: <AnalyticsIcon /> }
     ] : []),
     ...(!isAuthenticated ? [
@@ -166,6 +168,17 @@ const Navbar = () => {
                   >
                     統計・分析
                   </Button>
+                  <Button 
+                    color="inherit" 
+                    onClick={() => navigate('/wishlist')}
+                    startIcon={<FavoriteIcon />}
+                    sx={{ 
+                      fontWeight: isActive('/wishlist') ? 'bold' : 'normal',
+                      textDecoration: isActive('/wishlist') ? 'underline' : 'none'
+                    }}
+                  >
+                    ウィッシュリスト
+                  </Button>
                 </>
               )}
             </Box>
@@ -218,6 +231,12 @@ const Navbar = () => {
                   <MenuItem onClick={() => { navigate('/statistics'); handleMenuClose(); }}>
                     <AnalyticsIcon sx={{ mr: 1 }} />
                     統計・分析
+                  </MenuItem>
+                )}
+                {isMobile && (
+                  <MenuItem onClick={() => { navigate('/wishlist'); handleMenuClose(); }}>
+                    <FavoriteIcon sx={{ mr: 1 }} />
+                    ウィッシュリスト
                   </MenuItem>
                 )}
                 <MenuItem onClick={handleLogout}>

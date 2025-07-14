@@ -1,42 +1,45 @@
 import React, { useState, useEffect } from 'react';
 import {
+  Container,
   Typography,
   Box,
   Card,
+  CardContent,
   CardMedia,
-  TextField,
-  Button,
-  Chip,
   CircularProgress,
-  Tabs,
-  Tab,
+  Chip,
+  Button,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
+  Alert,
   Rating,
+  TextField,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
-  Alert,
   Snackbar
 } from '@mui/material';
-import { Search as SearchIcon, Add as AddIcon, Favorite as FavoriteIcon, FavoriteBorder as FavoriteBorderIcon } from '@mui/icons-material';
-import { useAuth } from '../context/AuthContext';
+import {
+  Favorite as FavoriteIcon,
+  FavoriteBorder as FavoriteBorderIcon,
+  Delete as DeleteIcon,
+  Clear as ClearIcon,
+  Add as AddIcon
+} from '@mui/icons-material';
 import axios from 'axios';
 
-const Movies = () => {
-  const { isAuthenticated } = useAuth();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [movies, setMovies] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [tabValue, setTabValue] = useState(0);
+const Wishlist = () => {
+  const [wishlist, setWishlist] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [clearDialogOpen, setClearDialogOpen] = useState(false);
+  const [removing, setRemoving] = useState(null);
   const [selectedMovie, setSelectedMovie] = useState(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
   const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
-  const [wishlistStatus, setWishlistStatus] = useState({});
-  const [wishlistLoading, setWishlistLoading] = useState({});
+  const [viewingRecordDialogOpen, setViewingRecordDialogOpen] = useState(false);
   const [viewingRecord, setViewingRecord] = useState({
     rating: 0,
     viewingDate: new Date().toISOString().slice(0, 10),
@@ -48,121 +51,116 @@ const Movies = () => {
 
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/api';
 
-  useEffect(() => {
-    if (tabValue === 0) {
-      fetchTrendingMovies();
-    } else if (tabValue === 1) {
-      fetchPopularMovies();
-    } else if (tabValue === 2) {
-      fetchNowPlayingMovies();
+  const fetchWishlist = React.useCallback(async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setError('認証が必要です');
+        setLoading(false);
+        return;
+      }
+
+      const response = await axios.get(`${API_BASE_URL}/wishlist`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (response.data.success) {
+        setWishlist(response.data.data);
+      } else {
+        setError('ウィッシュリストの取得に失敗しました');
+      }
+    } catch (error) {
+      console.error('Error fetching wishlist:', error);
+      setError('ウィッシュリストの取得に失敗しました');
+    } finally {
+      setLoading(false);
     }
-  }, [tabValue]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [API_BASE_URL]);
 
   useEffect(() => {
-    if (isAuthenticated && movies.length > 0) {
-      checkWishlistStatus();
-    }
-  }, [movies, isAuthenticated]); // eslint-disable-line react-hooks/exhaustive-deps
+    fetchWishlist();
+  }, [fetchWishlist]);
 
-  // Auto-search when search query changes
-  useEffect(() => {
-    if (searchQuery.trim()) {
-      const timeoutId = setTimeout(() => {
-        searchMovies();
-      }, 500); // 500ms debounce
+  const removeFromWishlist = async (tmdbMovieId) => {
+    try {
+      setRemoving(tmdbMovieId);
+      const token = localStorage.getItem('token');
       
-      return () => clearTimeout(timeoutId);
-    } else {
-      // If search query is empty, show current tab content
-      if (tabValue === 0) {
-        fetchTrendingMovies();
-      } else if (tabValue === 1) {
-        fetchPopularMovies();
-      } else if (tabValue === 2) {
-        fetchNowPlayingMovies();
-      }
-    }
-  }, [searchQuery]); // eslint-disable-line react-hooks/exhaustive-deps
+      const response = await axios.delete(`${API_BASE_URL}/wishlist/remove/${tmdbMovieId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
 
-  const fetchTrendingMovies = async () => {
-    setLoading(true);
-    try {
-      const response = await axios.get(`${API_BASE_URL}/movies/trending?timeWindow=day&page=1`);
       if (response.data.success) {
-        setMovies(response.data.data.results);
+        setWishlist(prev => prev.filter(item => item.tmdbMovieId !== tmdbMovieId));
+      } else {
+        setError('削除に失敗しました');
       }
     } catch (error) {
-      console.error('Error fetching trending movies:', error);
+      console.error('Error removing from wishlist:', error);
+      setError('削除に失敗しました');
     } finally {
-      setLoading(false);
+      setRemoving(null);
     }
   };
 
-  const fetchPopularMovies = async () => {
-    setLoading(true);
+  const clearWishlist = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/movies/popular?page=1`);
+      const token = localStorage.getItem('token');
+      
+      const response = await axios.delete(`${API_BASE_URL}/wishlist/clear`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
       if (response.data.success) {
-        setMovies(response.data.data.results);
+        setWishlist([]);
+        setClearDialogOpen(false);
+      } else {
+        setError('クリアに失敗しました');
       }
     } catch (error) {
-      console.error('Error fetching popular movies:', error);
-    } finally {
-      setLoading(false);
+      console.error('Error clearing wishlist:', error);
+      setError('クリアに失敗しました');
     }
   };
 
-  const fetchNowPlayingMovies = async () => {
-    setLoading(true);
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
     try {
-      const response = await axios.get(`${API_BASE_URL}/movies/now-playing?page=1`);
-      if (response.data.success) {
-        setMovies(response.data.data.results);
-      }
-    } catch (error) {
-      console.error('Error fetching now playing movies:', error);
-    } finally {
-      setLoading(false);
+      return new Date(dateString).toLocaleDateString('ja-JP', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    } catch {
+      return dateString;
     }
   };
 
-  const searchMovies = async () => {
-    if (!searchQuery.trim()) return;
-    
-    setLoading(true);
-    try {
-      const response = await axios.get(`${API_BASE_URL}/movies/search?query=${encodeURIComponent(searchQuery)}&page=1`);
-      if (response.data.success) {
-        setMovies(response.data.data.results);
-      }
-    } catch (error) {
-      console.error('Error searching movies:', error);
-    } finally {
-      setLoading(false);
-    }
+  const formatReleaseDate = (dateString) => {
+    if (!dateString) return '';
+    return new Date(dateString).getFullYear();
   };
 
-
-  const handleTabChange = (event, newValue) => {
-    setTabValue(newValue);
-    setSearchQuery('');
-  };
-
-  const handleMovieClick = (movie) => {
+  const handleMovieClick = (item) => {
+    // ウィッシュリストアイテムを映画オブジェクト形式に変換
+    const movie = {
+      id: item.tmdbMovieId,
+      title: item.movieTitle,
+      original_title: item.movieTitle,
+      overview: item.movieOverview,
+      poster_path: item.moviePosterPath,
+      release_date: item.movieReleaseDate,
+      vote_average: item.movieVoteAverage,
+      vote_count: 0, // ウィッシュリストには投票数が保存されていない
+      popularity: 0,
+      original_language: 'ja'
+    };
     setSelectedMovie(movie);
     setDetailsDialogOpen(true);
   };
 
-  const handleAddToWatchlist = (movie) => {
-    if (!isAuthenticated) {
-      setSnackbar({
-        open: true,
-        message: 'ログインしてください',
-        severity: 'warning'
-      });
-      return;
-    }
-    
+  const handleAddToViewingRecord = (movie) => {
     setSelectedMovie(movie);
     setViewingRecord({
       rating: 0,
@@ -172,7 +170,7 @@ const Movies = () => {
       review: ''
     });
     setDetailsDialogOpen(false);
-    setDialogOpen(true);
+    setViewingRecordDialogOpen(true);
   };
 
   const handleSaveViewingRecord = async () => {
@@ -211,7 +209,7 @@ const Movies = () => {
           message: '視聴記録を保存しました',
           severity: 'success'
         });
-        setDialogOpen(false);
+        setViewingRecordDialogOpen(false);
         setViewingRecord({
           rating: 0,
           viewingDate: new Date().toISOString().slice(0, 10),
@@ -230,162 +228,61 @@ const Movies = () => {
     }
   };
 
-  const getImageUrl = (posterPath) => {
-    return posterPath ? `https://image.tmdb.org/t/p/w500${posterPath}` : '/placeholder-movie.jpg';
+  const getPosterUrl = (posterPath) => {
+    if (!posterPath) return '/placeholder-movie.jpg';
+    return `https://image.tmdb.org/t/p/w500${posterPath}`;
   };
 
-  const formatReleaseDate = (dateString) => {
-    if (!dateString) return '';
-    return new Date(dateString).getFullYear();
-  };
-
-  const checkWishlistStatus = async () => {
-    if (!isAuthenticated) return;
-    
-    try {
-      const token = localStorage.getItem('token');
-      const statusPromises = movies.map(async (movie) => {
-        try {
-          const response = await axios.get(`${API_BASE_URL}/wishlist/check/${movie.id}`, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          return { movieId: movie.id, inWishlist: response.data.data };
-        } catch (error) {
-          console.error(`Error checking wishlist status for movie ${movie.id}:`, error);
-          return { movieId: movie.id, inWishlist: false };
-        }
-      });
-      
-      const results = await Promise.all(statusPromises);
-      const statusMap = {};
-      results.forEach(({ movieId, inWishlist }) => {
-        statusMap[movieId] = inWishlist;
-      });
-      setWishlistStatus(statusMap);
-    } catch (error) {
-      console.error('Error checking wishlist status:', error);
-    }
-  };
-
-  const handleWishlistToggle = async (movie) => {
-    if (!isAuthenticated) {
-      setSnackbar({
-        open: true,
-        message: 'ログインしてください',
-        severity: 'warning'
-      });
-      return;
-    }
-
-    const movieId = movie.id;
-    const isInWishlist = wishlistStatus[movieId];
-    
-    setWishlistLoading(prev => ({ ...prev, [movieId]: true }));
-    
-    try {
-      const token = localStorage.getItem('token');
-      
-      if (isInWishlist) {
-        // Remove from wishlist
-        const response = await axios.delete(`${API_BASE_URL}/wishlist/remove/${movieId}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        
-        if (response.data.success) {
-          setWishlistStatus(prev => ({ ...prev, [movieId]: false }));
-          setSnackbar({
-            open: true,
-            message: 'ウィッシュリストから削除しました',
-            severity: 'success'
-          });
-        }
-      } else {
-        // Add to wishlist
-        const wishlistData = {
-          tmdbMovieId: movieId,
-          movieTitle: movie.title,
-          moviePosterPath: movie.poster_path,
-          movieOverview: movie.overview,
-          movieReleaseDate: movie.release_date,
-          movieVoteAverage: movie.vote_average
-        };
-        
-        const response = await axios.post(`${API_BASE_URL}/wishlist/add`, wishlistData, {
-          headers: { 
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        
-        if (response.data.success) {
-          setWishlistStatus(prev => ({ ...prev, [movieId]: true }));
-          setSnackbar({
-            open: true,
-            message: 'ウィッシュリストに追加しました',
-            severity: 'success'
-          });
-        }
-      }
-    } catch (error) {
-      console.error('Error toggling wishlist:', error);
-      setSnackbar({
-        open: true,
-        message: error.response?.data?.message || 'エラーが発生しました',
-        severity: 'error'
-      });
-    } finally {
-      setWishlistLoading(prev => ({ ...prev, [movieId]: false }));
-    }
-  };
+  if (loading) {
+    return (
+      <Container maxWidth="lg" sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
+        <CircularProgress />
+      </Container>
+    );
+  }
 
   return (
-    <Box sx={{ 
-      mt: { xs: 2, sm: 4 }, 
-      mb: 4, 
-      px: { xs: '8px', sm: '16px', md: '24px' },
-      maxWidth: '1200px',
-      mx: 'auto',
-      width: '100%',
-      minWidth: 0
-    }}>
-      <Typography variant="h4" component="h1" gutterBottom>
-        映画を探す
-      </Typography>
-
-      {/* Search Bar */}
-      <Box sx={{ mb: { xs: 2, sm: 4 } }}>
-        <TextField
-          fullWidth
-          variant="outlined"
-          placeholder="映画を検索..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          InputProps={{
-            startAdornment: <SearchIcon sx={{ mr: 1, color: 'text.secondary' }} />,
-          }}
-        />
-      </Box>
-
-      {/* Category Tabs */}
-      <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
-        <Tabs 
-          value={tabValue} 
-          onChange={handleTabChange}
-          variant="scrollable"
-          scrollButtons="auto"
-          allowScrollButtonsMobile
-        >
-          <Tab label="トレンド" />
-          <Tab label="人気作品" />
-          <Tab label="上映中" />
-        </Tabs>
-      </Box>
-
-      {/* Movies Grid */}
-      {loading ? (
-        <Box display="flex" justifyContent="center" py={4}>
-          <CircularProgress />
+    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+        <Box>
+          <Typography variant="h4" component="h1" gutterBottom>
+            ウィッシュリスト
+          </Typography>
+          <Typography variant="body1" color="text.secondary">
+            気になる映画をお気に入りリストで管理しましょう
+          </Typography>
         </Box>
+        {wishlist.length > 0 && (
+          <Button
+            variant="outlined"
+            color="error"
+            startIcon={<ClearIcon />}
+            onClick={() => setClearDialogOpen(true)}
+            sx={{ borderRadius: 2 }}
+          >
+            すべてクリア
+          </Button>
+        )}
+      </Box>
+
+      {error && (
+        <Alert severity="error" sx={{ mb: 3 }}>
+          {error}
+        </Alert>
+      )}
+
+      {wishlist.length === 0 ? (
+        <Card sx={{ textAlign: 'center', py: 8, backgroundColor: 'grey.50' }}>
+          <CardContent>
+            <FavoriteBorderIcon sx={{ fontSize: 64, color: 'grey.400', mb: 2 }} />
+            <Typography variant="h6" color="text.secondary" gutterBottom>
+              ウィッシュリストは空です
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              映画を検索してお気に入りに追加してみましょう
+            </Typography>
+          </CardContent>
+        </Card>
       ) : (
         <Box sx={{
           display: 'grid',
@@ -404,8 +301,8 @@ const Movies = () => {
             gap: '6px'
           }
         }}>
-          {movies.map((movie) => (
-            <Box key={movie.id}>
+          {wishlist.map((item) => (
+            <Box key={item.id}>
               <Card 
                 sx={{ 
                   position: 'relative',
@@ -423,21 +320,18 @@ const Movies = () => {
                     '& .movie-poster': {
                       boxShadow: '0 20px 40px rgba(0,0,0,0.8)',
                     },
-                    '& .add-button': {
-                      opacity: 1
-                    },
-                    '& .wishlist-button': {
+                    '& .delete-button': {
                       opacity: 1
                     }
                   }
                 }}
-                onClick={() => handleMovieClick(movie)}
+                onClick={() => handleMovieClick(item)}
               >
                 <CardMedia
                   className="movie-poster"
                   component="img"
-                  image={getImageUrl(movie.poster_path)}
-                  alt={movie.title}
+                  image={getPosterUrl(item.moviePosterPath)}
+                  alt={item.movieTitle}
                   sx={{ 
                     width: '100%',
                     height: '100%',
@@ -447,66 +341,46 @@ const Movies = () => {
                   }}
                 />
                 
-                {isAuthenticated && (
-                  <>
-                    <Button
-                      className="add-button"
-                      variant="contained"
-                      color="primary"
-                      startIcon={<AddIcon />}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleAddToWatchlist(movie);
-                      }}
-                      sx={{
-                        position: 'absolute',
-                        top: 8,
-                        right: 8,
-                        opacity: 0,
-                        transition: 'opacity 0.3s ease',
-                        fontSize: '0.75rem',
-                        px: 1,
-                        py: 0.5,
-                        minWidth: 'auto'
-                      }}
-                    >
-                      記録
-                    </Button>
-                    <Button
-                      className="wishlist-button"
-                      variant="contained"
-                      color={wishlistStatus[movie.id] ? "error" : "secondary"}
-                      startIcon={
-                        wishlistLoading[movie.id] ? (
-                          <CircularProgress size={16} color="inherit" />
-                        ) : wishlistStatus[movie.id] ? (
-                          <FavoriteIcon />
-                        ) : (
-                          <FavoriteBorderIcon />
-                        )
-                      }
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleWishlistToggle(movie);
-                      }}
-                      disabled={wishlistLoading[movie.id]}
-                      sx={{
-                        position: 'absolute',
-                        top: 8,
-                        left: 8,
-                        opacity: 0,
-                        transition: 'opacity 0.3s ease',
-                        fontSize: '0.75rem',
-                        px: 1,
-                        py: 0.5,
-                        minWidth: 'auto'
-                      }}
-                    >
-                      {wishlistStatus[movie.id] ? '削除' : '追加'}
-                    </Button>
-                  </>
-                )}
+                <Button
+                  className="delete-button"
+                  variant="contained"
+                  color="error"
+                  startIcon={
+                    removing === item.tmdbMovieId ? (
+                      <CircularProgress size={16} color="inherit" />
+                    ) : (
+                      <DeleteIcon />
+                    )
+                  }
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removeFromWishlist(item.tmdbMovieId);
+                  }}
+                  disabled={removing === item.tmdbMovieId}
+                  sx={{
+                    position: 'absolute',
+                    top: 8,
+                    right: 8,
+                    opacity: 0,
+                    transition: 'opacity 0.3s ease',
+                    fontSize: '0.75rem',
+                    px: 1,
+                    py: 0.5,
+                    minWidth: 'auto'
+                  }}
+                >
+                  削除
+                </Button>
 
+                <FavoriteIcon
+                  sx={{
+                    position: 'absolute',
+                    top: 8,
+                    left: 8,
+                    color: 'error.main',
+                    fontSize: 28
+                  }}
+                />
                 {/* オーバーレイで映画情報を表示 */}
                 <Box
                   sx={{
@@ -526,22 +400,24 @@ const Movies = () => {
                   }}
                 >
                   <Typography variant="subtitle2" component="h3" fontWeight="bold" gutterBottom>
-                    {movie.title}
+                    {item.movieTitle}
                   </Typography>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Typography variant="caption" color="rgba(255,255,255,0.8)">
-                      {formatReleaseDate(movie.release_date)}
+                      {formatDate(item.movieReleaseDate)}
                     </Typography>
-                    <Chip 
-                      label={`★ ${movie.vote_average?.toFixed(1)}`}
-                      size="small"
-                      sx={{
-                        backgroundColor: 'rgba(229,9,20,0.8)',
-                        color: 'white',
-                        fontSize: '0.65rem',
-                        height: 20
-                      }}
-                    />
+                    {item.movieVoteAverage && (
+                      <Chip 
+                        label={`★ ${item.movieVoteAverage.toFixed(1)}`}
+                        size="small"
+                        sx={{
+                          backgroundColor: 'rgba(229,9,20,0.8)',
+                          color: 'white',
+                          fontSize: '0.65rem',
+                          height: 20
+                        }}
+                      />
+                    )}
                   </Box>
                 </Box>
               </Card>
@@ -549,6 +425,39 @@ const Movies = () => {
           ))}
         </Box>
       )}
+
+      <Dialog
+        open={clearDialogOpen}
+        onClose={() => setClearDialogOpen(false)}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <ClearIcon sx={{ mr: 1, color: 'error.main' }} />
+            ウィッシュリストをクリア
+          </Box>
+        </DialogTitle>
+        <DialogContent>
+          <Typography>
+            すべてのウィッシュリストアイテムを削除しますか？
+            この操作は元に戻せません。
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setClearDialogOpen(false)}>
+            キャンセル
+          </Button>
+          <Button 
+            onClick={clearWishlist} 
+            color="error" 
+            variant="contained"
+            startIcon={<ClearIcon />}
+          >
+            クリア
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {/* Movie Details Dialog */}
       <Dialog open={detailsDialogOpen} onClose={() => setDetailsDialogOpen(false)} maxWidth="md" fullWidth>
@@ -569,7 +478,7 @@ const Movies = () => {
                 {/* Movie Poster */}
                 <Box sx={{ flexShrink: 0 }}>
                   <img
-                    src={getImageUrl(selectedMovie.poster_path)}
+                    src={getPosterUrl(selectedMovie.poster_path)}
                     alt={selectedMovie.title}
                     style={{
                       width: '200px',
@@ -635,24 +544,6 @@ const Movies = () => {
                       </Typography>
                     </Box>
                   </Box>
-                  
-                  {selectedMovie.genre_ids && selectedMovie.genre_ids.length > 0 && (
-                    <Box>
-                      <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-                        ジャンル
-                      </Typography>
-                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                        {selectedMovie.genre_ids.map((genreId) => (
-                          <Chip 
-                            key={genreId}
-                            label={`Genre ${genreId}`}
-                            size="small"
-                            variant="outlined"
-                          />
-                        ))}
-                      </Box>
-                    </Box>
-                  )}
                 </Box>
               </Box>
             </DialogContent>
@@ -660,41 +551,32 @@ const Movies = () => {
               <Button onClick={() => setDetailsDialogOpen(false)}>
                 閉じる
               </Button>
-              {isAuthenticated && (
-                <>
-                  <Button 
-                    onClick={() => handleWishlistToggle(selectedMovie)} 
-                    variant="outlined"
-                    color={wishlistStatus[selectedMovie.id] ? "error" : "secondary"}
-                    startIcon={
-                      wishlistLoading[selectedMovie.id] ? (
-                        <CircularProgress size={16} color="inherit" />
-                      ) : wishlistStatus[selectedMovie.id] ? (
-                        <FavoriteIcon />
-                      ) : (
-                        <FavoriteBorderIcon />
-                      )
-                    }
-                    disabled={wishlistLoading[selectedMovie.id]}
-                  >
-                    {wishlistStatus[selectedMovie.id] ? 'ウィッシュリストから削除' : 'ウィッシュリストに追加'}
-                  </Button>
-                  <Button 
-                    onClick={() => handleAddToWatchlist(selectedMovie)} 
-                    variant="contained"
-                    startIcon={<AddIcon />}
-                  >
-                    視聴記録に追加
-                  </Button>
-                </>
-              )}
+              <Button 
+                onClick={() => handleAddToViewingRecord(selectedMovie)} 
+                variant="contained"
+                startIcon={<AddIcon />}
+              >
+                視聴記録に追加
+              </Button>
+              <Button 
+                onClick={() => {
+                  removeFromWishlist(selectedMovie.id);
+                  setDetailsDialogOpen(false);
+                }} 
+                variant="outlined"
+                color="error"
+                startIcon={<DeleteIcon />}
+                disabled={removing === selectedMovie.id}
+              >
+                ウィッシュリストから削除
+              </Button>
             </DialogActions>
           </>
         )}
       </Dialog>
 
       {/* Add Viewing Record Dialog */}
-      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} maxWidth="sm" fullWidth>
+      <Dialog open={viewingRecordDialogOpen} onClose={() => setViewingRecordDialogOpen(false)} maxWidth="sm" fullWidth>
         <DialogTitle>
           視聴記録を追加
           {selectedMovie && (
@@ -707,7 +589,7 @@ const Movies = () => {
           {selectedMovie && (
             <Box sx={{ pt: 1, pb: 2, display: 'flex', gap: 2, borderBottom: '1px solid', borderColor: 'divider', mb: 3 }}>
               <img
-                src={getImageUrl(selectedMovie.poster_path)}
+                src={getPosterUrl(selectedMovie.poster_path)}
                 alt={selectedMovie.title}
                 style={{
                   width: '60px',
@@ -805,7 +687,7 @@ const Movies = () => {
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setDialogOpen(false)}>
+          <Button onClick={() => setViewingRecordDialogOpen(false)}>
             キャンセル
           </Button>
           <Button 
@@ -831,8 +713,8 @@ const Movies = () => {
           {snackbar.message}
         </Alert>
       </Snackbar>
-    </Box>
+    </Container>
   );
 };
 
-export default Movies;
+export default Wishlist;

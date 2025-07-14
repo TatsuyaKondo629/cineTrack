@@ -9,6 +9,7 @@ import Movies from './pages/Movies';
 import Dashboard from './pages/Dashboard';
 import ViewingRecords from './pages/ViewingRecords';
 import Statistics from './pages/Statistics';
+import Wishlist from './pages/Wishlist';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 
@@ -101,6 +102,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Statistics />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/wishlist" 
+                element={
+                  <ProtectedRoute>
+                    <Wishlist />
                   </ProtectedRoute>
                 } 
               />
