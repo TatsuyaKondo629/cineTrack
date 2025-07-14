@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Container,
   Typography,
   Box,
-  Grid,
   Card,
   CardMedia,
   Button,
@@ -60,7 +58,15 @@ const Home = () => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ mt: { xs: 2, sm: 4 }, mb: 4, px: { xs: 2, sm: 3 } }}>
+    <Box sx={{ 
+      mt: { xs: 2, sm: 4 }, 
+      mb: 4, 
+      px: { xs: '8px', sm: '16px', md: '24px' },
+      maxWidth: '1200px',
+      mx: 'auto',
+      width: '100%',
+      minWidth: 0
+    }}>
       {/* Hero Section */}
       <Box sx={{ textAlign: 'center', mb: 6 }}>
         <Typography variant="h2" component="h1" gutterBottom sx={{ fontWeight: 'bold' }}>
@@ -174,25 +180,33 @@ const Home = () => {
           <Box sx={{
             display: 'grid',
             gridTemplateColumns: {
-              xs: 'repeat(2, 1fr)',
-              sm: 'repeat(2, 1fr)',
-              md: 'repeat(4, 1fr)',
-              lg: 'repeat(4, 1fr)',
-              xl: 'repeat(4, 1fr)'
+              xs: 'repeat(2, minmax(140px, 1fr))',
+              sm: 'repeat(2, minmax(160px, 1fr))',
+              md: 'repeat(4, minmax(180px, 1fr))',
+              lg: 'repeat(4, minmax(200px, 1fr))',
+              xl: 'repeat(4, minmax(220px, 1fr))'
             },
-            gap: 2
+            gap: { xs: '8px', sm: '12px', md: '16px' },
+            width: '100%',
+            justifyContent: 'center',
+            '@media (max-width: 320px)': {
+              gridTemplateColumns: 'repeat(2, minmax(120px, 1fr))',
+              gap: '6px'
+            }
           }}>
             {trendingMovies.map((movie) => (
               <Box key={movie.id}>
                 <Card 
                   sx={{ 
                     position: 'relative',
-                    aspectRatio: '2/3', // ポスター比率
+                    aspectRatio: '2/3',
                     cursor: 'pointer',
                     transition: 'transform 0.3s ease, box-shadow 0.3s ease',
                     border: 'none',
                     boxShadow: 'none',
                     backgroundColor: 'transparent',
+                    width: '100%',
+                    height: 'auto',
                     '&:hover': {
                       transform: 'translateY(-8px)',
                       zIndex: 10,
@@ -276,38 +290,36 @@ const Home = () => {
         <Typography variant="h4" component="h2" gutterBottom sx={{ mb: 4 }}>
           主な機能
         </Typography>
-        <Grid container spacing={4}>
-          <Grid item xs={12} md={4}>
-            <Box sx={{ p: 3 }}>
-              <Typography variant="h5" component="h3" gutterBottom color="primary">
-                📽️ 映画検索
-              </Typography>
-              <Typography variant="body1" color="text.secondary">
-                TMDbの豊富なデータベースから映画を検索し、詳細情報を確認できます
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <Box sx={{ p: 3 }}>
-              <Typography variant="h5" component="h3" gutterBottom color="primary">
-                📝 視聴記録
-              </Typography>
-              <Typography variant="body1" color="text.secondary">
-                観た映画を記録し、評価やレビュー、視聴場所などを残せます
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <Box sx={{ p: 3 }}>
-              <Typography variant="h5" component="h3" gutterBottom color="primary">
-                📊 統計表示
-              </Typography>
-              <Typography variant="body1" color="text.secondary">
-                視聴した映画の統計や傾向を確認し、映画体験を振り返れます
-              </Typography>
-            </Box>
-          </Grid>
-        </Grid>
+        <Box sx={{
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr', md: 'repeat(3, 1fr)' },
+          gap: 4
+        }}>
+          <Box sx={{ p: 3 }}>
+            <Typography variant="h5" component="h3" gutterBottom color="primary">
+              📽️ 映画検索
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              TMDbの豊富なデータベースから映画を検索し、詳細情報を確認できます
+            </Typography>
+          </Box>
+          <Box sx={{ p: 3 }}>
+            <Typography variant="h5" component="h3" gutterBottom color="primary">
+              📝 視聴記録
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              観た映画を記録し、評価やレビュー、視聴場所などを残せます
+            </Typography>
+          </Box>
+          <Box sx={{ p: 3 }}>
+            <Typography variant="h5" component="h3" gutterBottom color="primary">
+              📊 統計表示
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              視聴した映画の統計や傾向を確認し、映画体験を振り返れます
+            </Typography>
+          </Box>
+        </Box>
       </Box>
 
       {/* Movie Details Dialog */}
@@ -433,7 +445,7 @@ const Home = () => {
           </>
         )}
       </Dialog>
-    </Container>
+    </Box>
   );
 };
 

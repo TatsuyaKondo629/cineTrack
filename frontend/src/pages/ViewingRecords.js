@@ -3,7 +3,6 @@ import {
   Container,
   Typography,
   Box,
-  Grid,
   Card,
   CardContent,
   CardMedia,
@@ -63,14 +62,26 @@ const ViewingRecords = () => {
   const fetchViewingRecords = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${API_BASE_URL}/viewing-records?page=${page - 1}&size=${ITEMS_PER_PAGE}`);
+      const token = localStorage.getItem('token');
+      if (!token) {
+        showSnackbar('ログインが必要です', 'error');
+        return;
+      }
+
+      const response = await axios.get(`${API_BASE_URL}/viewing-records?page=${page - 1}&size=${ITEMS_PER_PAGE}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
       if (response.data.success) {
         setRecords(response.data.data.content);
         setTotalPages(response.data.data.totalPages);
       }
     } catch (error) {
       console.error('Error fetching viewing records:', error);
-      showSnackbar('記録の取得に失敗しました', 'error');
+      showSnackbar(error.response?.data?.message || '記録の取得に失敗しました', 'error');
     } finally {
       setLoading(false);
     }
@@ -121,6 +132,12 @@ const ViewingRecords = () => {
 
   const saveEditedRecord = async () => {
     try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        showSnackbar('ログインが必要です', 'error');
+        return;
+      }
+
       const dataToSend = {
         ...editData,
         viewingDate: editData.viewingDate + 'T12:00:00' // 日付を日時に変換
@@ -128,7 +145,13 @@ const ViewingRecords = () => {
       
       const response = await axios.put(
         `${API_BASE_URL}/viewing-records/${selectedRecord.id}`,
-        dataToSend
+        dataToSend,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
       );
       
       if (response.data.success) {
@@ -144,7 +167,18 @@ const ViewingRecords = () => {
 
   const confirmDeleteRecord = async () => {
     try {
-      const response = await axios.delete(`${API_BASE_URL}/viewing-records/${selectedRecord.id}`);
+      const token = localStorage.getItem('token');
+      if (!token) {
+        showSnackbar('ログインが必要です', 'error');
+        return;
+      }
+
+      const response = await axios.delete(`${API_BASE_URL}/viewing-records/${selectedRecord.id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
       
       if (response.data.success) {
         showSnackbar('記録を削除しました', 'success');
@@ -218,9 +252,22 @@ const ViewingRecords = () => {
         </Card>
       ) : (
         <>
-          <Grid container spacing={3}>
+          <Box 
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: {
+                xs: 'repeat(2, minmax(140px, 1fr))',
+                sm: 'repeat(2, 1fr)',
+                md: 'repeat(3, 1fr)'
+              },
+              gap: { xs: '8px', sm: '16px', md: '24px' },
+              '@media (max-width: 375px)': {
+                gridTemplateColumns: 'repeat(2, minmax(120px, 1fr))',
+                gap: '6px'
+              }
+            }}
+          >
             {filteredRecords.map((record) => (
-              <Grid item xs={12} sm={6} md={4} key={record.id}>
                 <Card 
                   sx={{ 
                     height: '100%',
@@ -293,9 +340,8 @@ const ViewingRecords = () => {
                     )}
                   </CardContent>
                 </Card>
-              </Grid>
             ))}
-          </Grid>
+          </Box>
 
           {/* Pagination */}
           {totalPages > 1 && (

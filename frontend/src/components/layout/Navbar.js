@@ -8,13 +8,26 @@ import {
   IconButton,
   Menu,
   MenuItem,
-  Avatar
+  Avatar,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Divider,
+  useTheme,
+  useMediaQuery
 } from '@mui/material';
 import { 
   Movie as MovieIcon,
   AccountCircle as AccountCircleIcon,
   Dashboard as DashboardIcon,
-  List as ListIcon
+  List as ListIcon,
+  Menu as MenuIcon,
+  Search as SearchIcon,
+  Login as LoginIcon,
+  PersonAdd as PersonAddIcon
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
@@ -24,6 +37,9 @@ const Navbar = () => {
   const location = useLocation();
   const { user, logout, isAuthenticated } = useAuth();
   const [anchorEl, setAnchorEl] = useState(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -36,70 +52,113 @@ const Navbar = () => {
   const handleLogout = () => {
     logout();
     handleMenuClose();
+    setDrawerOpen(false);
     navigate('/');
+  };
+
+  const handleDrawerToggle = () => {
+    setDrawerOpen(!drawerOpen);
+  };
+
+  const handleDrawerClose = () => {
+    setDrawerOpen(false);
+  };
+
+  const handleNavigate = (path) => {
+    navigate(path);
+    handleDrawerClose();
   };
 
   const isActive = (path) => location.pathname === path;
 
+  const menuItems = [
+    { text: '映画を探す', path: '/movies', icon: <SearchIcon /> },
+    ...(isAuthenticated ? [
+      { text: 'ダッシュボード', path: '/dashboard', icon: <DashboardIcon /> },
+      { text: '視聴記録', path: '/viewing-records', icon: <ListIcon /> }
+    ] : []),
+    ...(!isAuthenticated ? [
+      { text: 'ログイン', path: '/login', icon: <LoginIcon /> },
+      { text: '新規登録', path: '/register', icon: <PersonAddIcon /> }
+    ] : [])
+  ];
+
   return (
-    <AppBar position="static">
-      <Toolbar>
-        <MovieIcon sx={{ mr: 2 }} />
-        <Typography 
-          variant="h6" 
-          component="div" 
-          sx={{ 
-            flexGrow: 0, 
-            mr: 4,
-            cursor: 'pointer',
-            fontWeight: 'bold'
-          }}
-          onClick={() => navigate('/')}
-        >
-          CineTrack
-        </Typography>
-
-        <Box sx={{ flexGrow: 1, display: 'flex', gap: 2 }}>
-          <Button 
-            color="inherit" 
-            onClick={() => navigate('/movies')}
-            sx={{ 
-              fontWeight: isActive('/movies') ? 'bold' : 'normal',
-              textDecoration: isActive('/movies') ? 'underline' : 'none'
-            }}
-          >
-            映画を探す
-          </Button>
-          
-          {isAuthenticated && (
-            <>
-              <Button 
-                color="inherit" 
-                onClick={() => navigate('/dashboard')}
-                startIcon={<DashboardIcon />}
-                sx={{ 
-                  fontWeight: isActive('/dashboard') ? 'bold' : 'normal',
-                  textDecoration: isActive('/dashboard') ? 'underline' : 'none'
-                }}
-              >
-                ダッシュボード
-              </Button>
-              <Button 
-                color="inherit" 
-                onClick={() => navigate('/viewing-records')}
-                startIcon={<ListIcon />}
-                sx={{ 
-                  fontWeight: isActive('/viewing-records') ? 'bold' : 'normal',
-                  textDecoration: isActive('/viewing-records') ? 'underline' : 'none'
-                }}
-              >
-                視聴記録
-              </Button>
-            </>
+    <>
+      <AppBar position="static">
+        <Toolbar>
+          {/* ハンバーガーメニューボタン（モバイル・タブレット） */}
+          {isMobile && (
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              edge="start"
+              onClick={handleDrawerToggle}
+              sx={{ mr: 2 }}
+            >
+              <MenuIcon />
+            </IconButton>
           )}
-        </Box>
 
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          {/* ロゴとタイトル */}
+          <MovieIcon sx={{ mr: 2 }} />
+          <Typography 
+            variant="h6" 
+            component="div" 
+            sx={{ 
+              flexGrow: 1,
+              cursor: 'pointer',
+              fontWeight: 'bold'
+            }}
+            onClick={() => navigate('/')}
+          >
+            CineTrack
+          </Typography>
+
+          {/* デスクトップ用ナビゲーション */}
+          {!isMobile && (
+            <Box sx={{ display: 'flex', gap: 2, mr: 2 }}>
+              <Button 
+                color="inherit" 
+                onClick={() => navigate('/movies')}
+                sx={{ 
+                  fontWeight: isActive('/movies') ? 'bold' : 'normal',
+                  textDecoration: isActive('/movies') ? 'underline' : 'none'
+                }}
+              >
+                映画を探す
+              </Button>
+              
+              {isAuthenticated && (
+                <>
+                  <Button 
+                    color="inherit" 
+                    onClick={() => navigate('/dashboard')}
+                    startIcon={<DashboardIcon />}
+                    sx={{ 
+                      fontWeight: isActive('/dashboard') ? 'bold' : 'normal',
+                      textDecoration: isActive('/dashboard') ? 'underline' : 'none'
+                    }}
+                  >
+                    ダッシュボード
+                  </Button>
+                  <Button 
+                    color="inherit" 
+                    onClick={() => navigate('/viewing-records')}
+                    startIcon={<ListIcon />}
+                    sx={{ 
+                      fontWeight: isActive('/viewing-records') ? 'bold' : 'normal',
+                      textDecoration: isActive('/viewing-records') ? 'underline' : 'none'
+                    }}
+                  >
+                    視聴記録
+                  </Button>
+                </>
+              )}
+            </Box>
+          )}
+
+          {/* ユーザーメニュー */}
           {isAuthenticated ? (
             <>
               <IconButton
@@ -130,14 +189,18 @@ const Navbar = () => {
                 open={Boolean(anchorEl)}
                 onClose={handleMenuClose}
               >
-                <MenuItem onClick={() => { navigate('/dashboard'); handleMenuClose(); }}>
-                  <DashboardIcon sx={{ mr: 1 }} />
-                  ダッシュボード
-                </MenuItem>
-                <MenuItem onClick={() => { navigate('/viewing-records'); handleMenuClose(); }}>
-                  <ListIcon sx={{ mr: 1 }} />
-                  視聴記録
-                </MenuItem>
+                {isMobile && (
+                  <MenuItem onClick={() => { navigate('/dashboard'); handleMenuClose(); }}>
+                    <DashboardIcon sx={{ mr: 1 }} />
+                    ダッシュボード
+                  </MenuItem>
+                )}
+                {isMobile && (
+                  <MenuItem onClick={() => { navigate('/viewing-records'); handleMenuClose(); }}>
+                    <ListIcon sx={{ mr: 1 }} />
+                    視聴記録
+                  </MenuItem>
+                )}
                 <MenuItem onClick={handleLogout}>
                   <AccountCircleIcon sx={{ mr: 1 }} />
                   ログアウト
@@ -145,30 +208,81 @@ const Navbar = () => {
               </Menu>
             </>
           ) : (
-            <>
-              <Button 
-                color="inherit" 
-                onClick={() => navigate('/login')}
-                sx={{ 
-                  fontWeight: isActive('/login') ? 'bold' : 'normal'
-                }}
-              >
-                ログイン
-              </Button>
-              <Button 
-                color="inherit" 
-                onClick={() => navigate('/register')}
-                sx={{ 
-                  fontWeight: isActive('/register') ? 'bold' : 'normal'
-                }}
-              >
-                新規登録
-              </Button>
-            </>
+            !isMobile && (
+              <Box sx={{ display: 'flex', gap: 1 }}>
+                <Button 
+                  color="inherit" 
+                  onClick={() => navigate('/login')}
+                  sx={{ 
+                    fontWeight: isActive('/login') ? 'bold' : 'normal'
+                  }}
+                >
+                  ログイン
+                </Button>
+                <Button 
+                  color="inherit" 
+                  onClick={() => navigate('/register')}
+                  sx={{ 
+                    fontWeight: isActive('/register') ? 'bold' : 'normal'
+                  }}
+                >
+                  新規登録
+                </Button>
+              </Box>
+            )
           )}
+        </Toolbar>
+      </AppBar>
+
+      {/* ハンバーガーメニュー用Drawer */}
+      <Drawer
+        variant="temporary"
+        anchor="left"
+        open={drawerOpen}
+        onClose={handleDrawerClose}
+        ModalProps={{
+          keepMounted: true, // Better open performance on mobile.
+        }}
+        sx={{
+          display: { xs: 'block', md: 'none' },
+          '& .MuiDrawer-paper': { 
+            boxSizing: 'border-box', 
+            width: 240 
+          },
+        }}
+      >
+        <Box sx={{ width: 240, pt: 2 }}>
+          <List>
+            {menuItems.map((item) => (
+              <ListItem key={item.text} disablePadding>
+                <ListItemButton 
+                  onClick={() => handleNavigate(item.path)}
+                  selected={isActive(item.path)}
+                >
+                  <ListItemIcon>
+                    {item.icon}
+                  </ListItemIcon>
+                  <ListItemText primary={item.text} />
+                </ListItemButton>
+              </ListItem>
+            ))}
+            {isAuthenticated && (
+              <>
+                <Divider sx={{ my: 1 }} />
+                <ListItem disablePadding>
+                  <ListItemButton onClick={handleLogout}>
+                    <ListItemIcon>
+                      <AccountCircleIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="ログアウト" />
+                  </ListItemButton>
+                </ListItem>
+              </>
+            )}
+          </List>
         </Box>
-      </Toolbar>
-    </AppBar>
+      </Drawer>
+    </>
   );
 };
 

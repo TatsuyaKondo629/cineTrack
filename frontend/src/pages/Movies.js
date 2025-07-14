@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Container,
   Typography,
   Box,
-  Grid,
   Card,
   CardMedia,
   TextField,
@@ -57,6 +55,26 @@ const Movies = () => {
       fetchNowPlayingMovies();
     }
   }, [tabValue]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Auto-search when search query changes
+  useEffect(() => {
+    if (searchQuery.trim()) {
+      const timeoutId = setTimeout(() => {
+        searchMovies();
+      }, 500); // 500ms debounce
+      
+      return () => clearTimeout(timeoutId);
+    } else {
+      // If search query is empty, show current tab content
+      if (tabValue === 0) {
+        fetchTrendingMovies();
+      } else if (tabValue === 1) {
+        fetchPopularMovies();
+      } else if (tabValue === 2) {
+        fetchNowPlayingMovies();
+      }
+    }
+  }, [searchQuery]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchTrendingMovies = async () => {
     setLoading(true);
@@ -116,11 +134,6 @@ const Movies = () => {
     }
   };
 
-  const handleSearchKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      searchMovies();
-    }
-  };
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
@@ -219,43 +232,31 @@ const Movies = () => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ mt: { xs: 2, sm: 4 }, mb: 4, px: { xs: 2, sm: 3 } }}>
+    <Box sx={{ 
+      mt: { xs: 2, sm: 4 }, 
+      mb: 4, 
+      px: { xs: '8px', sm: '16px', md: '24px' },
+      maxWidth: '1200px',
+      mx: 'auto',
+      width: '100%',
+      minWidth: 0
+    }}>
       <Typography variant="h4" component="h1" gutterBottom>
         映画を探す
       </Typography>
 
       {/* Search Bar */}
-      <Box sx={{ 
-        mb: 4, 
-        display: 'flex', 
-        gap: { xs: 2, sm: 2 }, 
-        alignItems: 'stretch',
-        flexDirection: { xs: 'column', sm: 'row' }
-      }}>
+      <Box sx={{ mb: { xs: 2, sm: 4 } }}>
         <TextField
           fullWidth
           variant="outlined"
           placeholder="映画を検索..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          onKeyPress={handleSearchKeyPress}
           InputProps={{
             startAdornment: <SearchIcon sx={{ mr: 1, color: 'text.secondary' }} />,
           }}
-          sx={{ order: { xs: 1, sm: 0 }, mb: { xs: 0, sm: 0 } }}
         />
-        <Button 
-          variant="contained" 
-          onClick={searchMovies}
-          disabled={!searchQuery.trim()}
-          sx={{ 
-            minWidth: { xs: '100%', sm: '120px' },
-            order: { xs: 2, sm: 0 },
-            height: { xs: '56px', sm: '56px' }
-          }}
-        >
-          検索
-        </Button>
       </Box>
 
       {/* Category Tabs */}
@@ -282,25 +283,33 @@ const Movies = () => {
         <Box sx={{
           display: 'grid',
           gridTemplateColumns: {
-            xs: 'repeat(2, 1fr)',
-            sm: 'repeat(2, 1fr)',
-            md: 'repeat(4, 1fr)',
-            lg: 'repeat(4, 1fr)',
-            xl: 'repeat(4, 1fr)'
+            xs: 'repeat(2, minmax(140px, 1fr))',
+            sm: 'repeat(2, minmax(160px, 1fr))',
+            md: 'repeat(4, minmax(180px, 1fr))',
+            lg: 'repeat(4, minmax(200px, 1fr))',
+            xl: 'repeat(4, minmax(220px, 1fr))'
           },
-          gap: 2
+          gap: { xs: '8px', sm: '12px', md: '16px' },
+          width: '100%',
+          justifyContent: 'center',
+          '@media (max-width: 320px)': {
+            gridTemplateColumns: 'repeat(2, minmax(120px, 1fr))',
+            gap: '6px'
+          }
         }}>
           {movies.map((movie) => (
             <Box key={movie.id}>
               <Card 
                 sx={{ 
                   position: 'relative',
-                  aspectRatio: '2/3', // ポスター比率
+                  aspectRatio: '2/3',
                   cursor: 'pointer',
                   transition: 'transform 0.3s ease, box-shadow 0.3s ease',
                   border: 'none',
                   boxShadow: 'none',
                   backgroundColor: 'transparent',
+                  width: '100%',
+                  height: 'auto',
                   '&:hover': {
                     transform: 'translateY(-8px)',
                     zIndex: 10,
@@ -659,7 +668,7 @@ const Movies = () => {
           {snackbar.message}
         </Alert>
       </Snackbar>
-    </Container>
+    </Box>
   );
 };
 

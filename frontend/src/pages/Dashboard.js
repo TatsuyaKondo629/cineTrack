@@ -3,7 +3,6 @@ import {
   Container,
   Typography,
   Box,
-  Grid,
   Card,
   CardContent,
   CardMedia,
@@ -35,14 +34,25 @@ const Dashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error('No authentication token found');
+        return;
+      }
+
+      const headers = {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      };
+
       // Fetch user statistics
-      const statsResponse = await axios.get(`${API_BASE_URL}/viewing-records/stats`);
+      const statsResponse = await axios.get(`${API_BASE_URL}/viewing-records/stats`, { headers });
       if (statsResponse.data.success) {
         setStats(statsResponse.data.data);
       }
 
       // Fetch recent viewing records (limit to 6)
-      const recordsResponse = await axios.get(`${API_BASE_URL}/viewing-records?page=0&size=6`);
+      const recordsResponse = await axios.get(`${API_BASE_URL}/viewing-records?page=0&size=6`, { headers });
       if (recordsResponse.data.success) {
         setRecentRecords(recordsResponse.data.data.content);
       }
@@ -78,7 +88,7 @@ const Dashboard = () => {
       {/* Welcome Section */}
       <Box sx={{ mb: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom>
-          おかえりなさい、{user?.username}さん
+          おかえりなさい、<br />{user?.username}さん
         </Typography>
         <Typography variant="body1" color="text.secondary">
           あなたの映画ライフを確認しましょう
@@ -86,49 +96,108 @@ const Dashboard = () => {
       </Box>
 
       {/* Statistics Cards */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid item xs={12} sm={6} md={4}>
-          <Card sx={{ height: '100%' }}>
-            <CardContent sx={{ textAlign: 'center', py: 3 }}>
-              <MovieIcon sx={{ fontSize: 40, color: 'primary.main', mb: 1 }} />
-              <Typography variant="h4" component="div" gutterBottom>
-                {stats?.totalMovies || 0}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                視聴した映画数
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
+      <Box 
+        sx={{ 
+          display: 'grid',
+          gridTemplateColumns: {
+            xs: 'repeat(3, 1fr)',
+            sm: 'repeat(3, 1fr)',
+            md: 'repeat(3, 1fr)'
+          },
+          gap: { xs: '8px', sm: '16px', md: '24px' },
+          mb: 4,
+          '@media (max-width: 375px)': {
+            gap: '6px'
+          }
+        }}
+      >
+        <Card sx={{ height: '100%' }}>
+          <CardContent sx={{ 
+            textAlign: 'center', 
+            py: { xs: 2, sm: 3 },
+            px: { xs: 1, sm: 2 }
+          }}>
+            <MovieIcon sx={{ 
+              fontSize: { xs: 28, sm: 40 }, 
+              color: 'primary.main', 
+              mb: 1 
+            }} />
+            <Typography 
+              variant="h5" 
+              component="div" 
+              gutterBottom
+              sx={{ fontSize: { xs: '1.2rem', sm: '2rem' } }}
+            >
+              {stats?.totalMovies || 0}
+            </Typography>
+            <Typography 
+              variant="body2" 
+              color="text.secondary"
+              sx={{ fontSize: { xs: '0.7rem', sm: '0.875rem' } }}
+            >
+              視聴した映画数
+            </Typography>
+          </CardContent>
+        </Card>
         
-        <Grid item xs={12} sm={6} md={4}>
-          <Card sx={{ height: '100%' }}>
-            <CardContent sx={{ textAlign: 'center', py: 3 }}>
-              <StarIcon sx={{ fontSize: 40, color: 'warning.main', mb: 1 }} />
-              <Typography variant="h4" component="div" gutterBottom>
-                {stats?.averageRating?.toFixed(1) || '0.0'}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                平均評価
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
+        <Card sx={{ height: '100%' }}>
+          <CardContent sx={{ 
+            textAlign: 'center', 
+            py: { xs: 2, sm: 3 },
+            px: { xs: 1, sm: 2 }
+          }}>
+            <StarIcon sx={{ 
+              fontSize: { xs: 28, sm: 40 }, 
+              color: 'warning.main', 
+              mb: 1 
+            }} />
+            <Typography 
+              variant="h5" 
+              component="div" 
+              gutterBottom
+              sx={{ fontSize: { xs: '1.2rem', sm: '2rem' } }}
+            >
+              {stats?.averageRating?.toFixed(1) || '0.0'}
+            </Typography>
+            <Typography 
+              variant="body2" 
+              color="text.secondary"
+              sx={{ fontSize: { xs: '0.7rem', sm: '0.875rem' } }}
+            >
+              平均評価
+            </Typography>
+          </CardContent>
+        </Card>
         
-        <Grid item xs={12} sm={6} md={4}>
-          <Card sx={{ height: '100%' }}>
-            <CardContent sx={{ textAlign: 'center', py: 3 }}>
-              <TrendingUpIcon sx={{ fontSize: 40, color: 'success.main', mb: 1 }} />
-              <Typography variant="h4" component="div" gutterBottom>
-                {recentRecords.length}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                最近の記録
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
+        <Card sx={{ height: '100%' }}>
+          <CardContent sx={{ 
+            textAlign: 'center', 
+            py: { xs: 2, sm: 3 },
+            px: { xs: 1, sm: 2 }
+          }}>
+            <TrendingUpIcon sx={{ 
+              fontSize: { xs: 28, sm: 40 }, 
+              color: 'success.main', 
+              mb: 1 
+            }} />
+            <Typography 
+              variant="h5" 
+              component="div" 
+              gutterBottom
+              sx={{ fontSize: { xs: '1.2rem', sm: '2rem' } }}
+            >
+              {recentRecords.length}
+            </Typography>
+            <Typography 
+              variant="body2" 
+              color="text.secondary"
+              sx={{ fontSize: { xs: '0.7rem', sm: '0.875rem' } }}
+            >
+              最近の記録
+            </Typography>
+          </CardContent>
+        </Card>
+      </Box>
 
       {/* Recent Viewing Records */}
       <Box sx={{ mb: 4 }}>
@@ -160,9 +229,22 @@ const Dashboard = () => {
             </Button>
           </Card>
         ) : (
-          <Grid container spacing={3}>
+          <Box 
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: {
+                xs: 'repeat(2, minmax(140px, 1fr))',
+                sm: 'repeat(2, 1fr)',
+                md: 'repeat(3, 1fr)'
+              },
+              gap: { xs: '8px', sm: '16px', md: '24px' },
+              '@media (max-width: 375px)': {
+                gridTemplateColumns: 'repeat(2, minmax(120px, 1fr))',
+                gap: '6px'
+              }
+            }}
+          >
             {recentRecords.map((record) => (
-              <Grid item xs={12} sm={6} md={4} key={record.id}>
                 <Card 
                   sx={{ 
                     height: '100%',
@@ -233,9 +315,8 @@ const Dashboard = () => {
                     )}
                   </CardContent>
                 </Card>
-              </Grid>
             ))}
-          </Grid>
+          </Box>
         )}
       </Box>
 
@@ -244,28 +325,31 @@ const Dashboard = () => {
         <Typography variant="h5" component="h2" gutterBottom>
           クイックアクション
         </Typography>
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6} md={3}>
-            <Button
-              variant="contained"
-              fullWidth
-              sx={{ py: 2 }}
-              onClick={() => navigate('/movies')}
-            >
-              映画を探す
-            </Button>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Button
-              variant="outlined"
-              fullWidth
-              sx={{ py: 2 }}
-              onClick={() => navigate('/viewing-records')}
-            >
-              視聴記録を見る
-            </Button>
-          </Grid>
-        </Grid>
+        <Box 
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: {
+              xs: 'repeat(2, 1fr)',
+              md: 'repeat(4, 1fr)'
+            },
+            gap: 2
+          }}
+        >
+          <Button
+            variant="contained"
+            sx={{ py: 2 }}
+            onClick={() => navigate('/movies')}
+          >
+            映画を探す
+          </Button>
+          <Button
+            variant="outlined"
+            sx={{ py: 2 }}
+            onClick={() => navigate('/viewing-records')}
+          >
+            視聴記録を見る
+          </Button>
+        </Box>
       </Box>
     </Container>
   );
