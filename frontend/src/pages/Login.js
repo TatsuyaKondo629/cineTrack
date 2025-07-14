@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Container,
   Paper,
@@ -14,13 +14,19 @@ import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, isAuthenticated, loading: authLoading } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleChange = (e) => {
     setFormData({
@@ -82,7 +88,7 @@ const Login = () => {
               autoFocus
               value={formData.email}
               onChange={handleChange}
-              disabled={loading}
+              disabled={loading || authLoading}
             />
             <TextField
               margin="normal"
@@ -95,14 +101,14 @@ const Login = () => {
               autoComplete="current-password"
               value={formData.password}
               onChange={handleChange}
-              disabled={loading}
+              disabled={loading || authLoading}
             />
             <Button
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
-              disabled={loading}
+              disabled={loading || authLoading}
             >
               {loading ? 'ログイン中...' : 'ログイン'}
             </Button>
