@@ -8,6 +8,7 @@ import Register from './pages/Register';
 import Movies from './pages/Movies';
 import Dashboard from './pages/Dashboard';
 import ViewingRecords from './pages/ViewingRecords';
+import Statistics from './pages/Statistics';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 
@@ -92,6 +93,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <ViewingRecords />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/statistics" 
+                element={
+                  <ProtectedRoute>
+                    <Statistics />
                   </ProtectedRoute>
                 } 
               />

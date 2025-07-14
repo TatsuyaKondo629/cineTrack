@@ -27,7 +27,8 @@ import {
   Menu as MenuIcon,
   Search as SearchIcon,
   Login as LoginIcon,
-  PersonAdd as PersonAddIcon
+  PersonAdd as PersonAddIcon,
+  Analytics as AnalyticsIcon
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
@@ -75,7 +76,8 @@ const Navbar = () => {
     { text: '映画を探す', path: '/movies', icon: <SearchIcon /> },
     ...(isAuthenticated ? [
       { text: 'ダッシュボード', path: '/dashboard', icon: <DashboardIcon /> },
-      { text: '視聴記録', path: '/viewing-records', icon: <ListIcon /> }
+      { text: '視聴記録', path: '/viewing-records', icon: <ListIcon /> },
+      { text: '統計・分析', path: '/statistics', icon: <AnalyticsIcon /> }
     ] : []),
     ...(!isAuthenticated ? [
       { text: 'ログイン', path: '/login', icon: <LoginIcon /> },
@@ -153,6 +155,17 @@ const Navbar = () => {
                   >
                     視聴記録
                   </Button>
+                  <Button 
+                    color="inherit" 
+                    onClick={() => navigate('/statistics')}
+                    startIcon={<AnalyticsIcon />}
+                    sx={{ 
+                      fontWeight: isActive('/statistics') ? 'bold' : 'normal',
+                      textDecoration: isActive('/statistics') ? 'underline' : 'none'
+                    }}
+                  >
+                    統計・分析
+                  </Button>
                 </>
               )}
             </Box>
@@ -199,6 +212,12 @@ const Navbar = () => {
                   <MenuItem onClick={() => { navigate('/viewing-records'); handleMenuClose(); }}>
                     <ListIcon sx={{ mr: 1 }} />
                     視聴記録
+                  </MenuItem>
+                )}
+                {isMobile && (
+                  <MenuItem onClick={() => { navigate('/statistics'); handleMenuClose(); }}>
+                    <AnalyticsIcon sx={{ mr: 1 }} />
+                    統計・分析
                   </MenuItem>
                 )}
                 <MenuItem onClick={handleLogout}>
