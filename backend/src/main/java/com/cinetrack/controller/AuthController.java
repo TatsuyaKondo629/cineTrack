@@ -50,7 +50,7 @@ public class AuthController {
             return ResponseEntity.ok(ApiResponse.success("Login successful", authResponse));
             
         } catch (BadCredentialsException e) {
-            return ResponseEntity.badRequest()
+            return ResponseEntity.status(401)
                 .body(ApiResponse.error("Invalid email or password"));
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
@@ -63,12 +63,12 @@ public class AuthController {
         try {
             if (userService.existsByUsername(registerRequest.getUsername())) {
                 return ResponseEntity.badRequest()
-                    .body(ApiResponse.error("Username already exists"));
+                    .body(ApiResponse.error("このユーザー名は既に使用されています"));
             }
             
             if (userService.existsByEmail(registerRequest.getEmail())) {
                 return ResponseEntity.badRequest()
-                    .body(ApiResponse.error("Email already exists"));
+                    .body(ApiResponse.error("このメールアドレスは既に登録されています"));
             }
             
             User user = userService.createUser(
@@ -80,7 +80,7 @@ public class AuthController {
             String jwt = jwtUtil.generateToken(user.getUsername());
             AuthResponse authResponse = new AuthResponse(jwt, user.getUsername(), user.getEmail());
             
-            return ResponseEntity.ok(ApiResponse.success("Registration successful", authResponse));
+            return ResponseEntity.ok(ApiResponse.success("ユーザーが正常に登録されました", authResponse));
             
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
