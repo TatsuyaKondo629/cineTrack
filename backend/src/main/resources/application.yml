@@ -5,7 +5,7 @@ spring:
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/cinetrack}
     username: ${SPRING_DATASOURCE_USERNAME:cinetrack_user}
-    password: ${SPRING_DATASOURCE_PASSWORD:password}
+    password: ${SPRING_DATASOURCE_PASSWORD:cinetrack123}
     driver-class-name: org.postgresql.Driver
     
   jpa:
@@ -15,6 +15,12 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
+        bytecode:
+          use_reflection_optimizer: false
+        enhancer:
+          enableLazyInitialization: false
+          enableDirtyTracking: false
+          enableAssociationManagement: false
     show-sql: true
     
   security:
@@ -29,12 +35,12 @@ server:
 
 # JWT設定
 jwt:
-  secret: ${JWT_SECRET:mySecretKey}
+  secret: ${JWT_SECRET:mySecretKeyForCineTrackApplicationMustBe256BitsLongForSecurity}
   expiration: ${JWT_EXPIRATION:86400}
 
 # TMDb API設定
 tmdb:
-  api-key: ${TMDB_API_KEY:your_actual_tmdb_api_key_here}
+  api-key: ${TMDB_API_KEY:demo_api_key_please_replace_with_actual_key}
   base-url: ${TMDB_BASE_URL:https://api.themoviedb.org/3}
   
 # CORS設定

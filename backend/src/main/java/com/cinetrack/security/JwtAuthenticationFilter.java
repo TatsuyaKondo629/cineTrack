@@ -37,20 +37,29 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             jwt = authorizationHeader.substring(7);
             try {
                 username = jwtUtil.extractUsername(jwt);
+                logger.debug("JWT token extracted username: " + username);
             } catch (Exception e) {
                 logger.error("JWT token extraction failed", e);
             }
+        } else {
+            logger.debug("No Authorization header or invalid format");
         }
         
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            logger.debug("Processing authentication for user: " + username);
             UserDetails userDetails = userService.loadUserByUsername(username);
             
             if (jwtUtil.validateToken(jwt, userDetails)) {
+                logger.debug("JWT token validated for user: " + username);
                 UsernamePasswordAuthenticationToken authToken = 
                     new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+            } else {
+                logger.debug("JWT token validation failed for user: " + username);
             }
+        } else if (username != null) {
+            logger.debug("Authentication already exists for user: " + username);
         }
         
         filterChain.doFilter(request, response);
