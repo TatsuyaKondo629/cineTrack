@@ -1,87 +1,69 @@
-package com.cinetrack.entity;
+package com.cinetrack.dto;
 
-import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.*;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "viewing_records")
-public class ViewingRecord {
+public class ViewingRecordDto {
     
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    @JsonBackReference
-    private User user;
-    
-    @Column(name = "tmdb_movie_id", nullable = false)
     @NotNull(message = "Movie ID is required")
     private Long tmdbMovieId;
     
-    @Column(name = "movie_title", nullable = false)
     @NotBlank(message = "Movie title is required")
     @Size(max = 255, message = "Movie title must be less than 255 characters")
     private String movieTitle;
     
-    @Column(name = "movie_poster_path")
     private String moviePosterPath;
     
-    @Column(name = "viewing_date", nullable = false)
     @NotNull(message = "Viewing date is required")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime viewingDate;
     
-    @Column(name = "rating", nullable = false)
     @NotNull(message = "Rating is required")
     @DecimalMin(value = "0.5", message = "Rating must be at least 0.5")
     @DecimalMax(value = "5.0", message = "Rating must be at most 5.0")
     private Double rating;
     
-    @Column(name = "theater")
     @Size(max = 255, message = "Theater name must be less than 255 characters")
     private String theater;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "theater_id")
-    private Theater theaterEntity;
+    // Theater entity information for advanced theater search
+    private Long theaterId;
+    private TheaterDto theaterInfo;
     
-    @Column(name = "screening_format")
     @Size(max = 50, message = "Screening format must be less than 50 characters")
     private String screeningFormat;
     
-    @Column(name = "review", columnDefinition = "TEXT")
     @Size(max = 2000, message = "Review must be less than 2000 characters")
     private String review;
     
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt;
     
-    @Column(name = "updated_at")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime updatedAt;
     
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-    }
+    // Constructors
+    public ViewingRecordDto() {}
     
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
-    
-    public ViewingRecord() {}
-    
-    public ViewingRecord(User user, Long tmdbMovieId, String movieTitle, LocalDateTime viewingDate, Double rating) {
-        this.user = user;
+    public ViewingRecordDto(Long id, Long tmdbMovieId, String movieTitle, String moviePosterPath,
+                           LocalDateTime viewingDate, Double rating, String theater, Long theaterId,
+                           String screeningFormat, String review, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.id = id;
         this.tmdbMovieId = tmdbMovieId;
         this.movieTitle = movieTitle;
+        this.moviePosterPath = moviePosterPath;
         this.viewingDate = viewingDate;
         this.rating = rating;
+        this.theater = theater;
+        this.theaterId = theaterId;
+        this.screeningFormat = screeningFormat;
+        this.review = review;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
     
     // Getters and Setters
@@ -91,14 +73,6 @@ public class ViewingRecord {
     
     public void setId(Long id) {
         this.id = id;
-    }
-    
-    public User getUser() {
-        return user;
-    }
-    
-    public void setUser(User user) {
-        this.user = user;
     }
     
     public Long getTmdbMovieId() {
@@ -149,12 +123,20 @@ public class ViewingRecord {
         this.theater = theater;
     }
     
-    public Theater getTheaterEntity() {
-        return theaterEntity;
+    public Long getTheaterId() {
+        return theaterId;
     }
     
-    public void setTheaterEntity(Theater theaterEntity) {
-        this.theaterEntity = theaterEntity;
+    public void setTheaterId(Long theaterId) {
+        this.theaterId = theaterId;
+    }
+    
+    public TheaterDto getTheaterInfo() {
+        return theaterInfo;
+    }
+    
+    public void setTheaterInfo(TheaterDto theaterInfo) {
+        this.theaterInfo = theaterInfo;
     }
     
     public String getScreeningFormat() {

@@ -29,7 +29,8 @@ import {
   Login as LoginIcon,
   PersonAdd as PersonAddIcon,
   Favorite as FavoriteIcon,
-  Analytics as AnalyticsIcon
+  Analytics as AnalyticsIcon,
+  LocationOn as TheaterIcon
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
@@ -75,6 +76,7 @@ const Navbar = () => {
 
   const menuItems = [
     { text: '映画を探す', path: '/movies', icon: <SearchIcon /> },
+    { text: '映画館検索', path: '/theaters', icon: <TheaterIcon /> },
     ...(isAuthenticated ? [
       { text: 'ダッシュボード', path: '/dashboard', icon: <DashboardIcon /> },
       { text: '視聴記録', path: '/viewing-records', icon: <ListIcon /> },
@@ -131,6 +133,17 @@ const Navbar = () => {
                 }}
               >
                 映画を探す
+              </Button>
+              <Button 
+                color="inherit" 
+                onClick={() => navigate('/theaters')}
+                startIcon={<TheaterIcon />}
+                sx={{ 
+                  fontWeight: isActive('/theaters') ? 'bold' : 'normal',
+                  textDecoration: isActive('/theaters') ? 'underline' : 'none'
+                }}
+              >
+                映画館検索
               </Button>
               
               {isAuthenticated && (

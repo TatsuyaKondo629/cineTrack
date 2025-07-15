@@ -1,6 +1,7 @@
 package com.cinetrack.controller;
 
 import com.cinetrack.dto.ApiResponse;
+import com.cinetrack.dto.ViewingRecordDto;
 import com.cinetrack.entity.ViewingRecord;
 import com.cinetrack.service.ViewingRecordService;
 import jakarta.validation.Valid;
@@ -27,7 +28,21 @@ public class ViewingRecordController {
     private ViewingRecordService viewingRecordService;
     
     @PostMapping
-    public ResponseEntity<ApiResponse<ViewingRecord>> createViewingRecord(
+    public ResponseEntity<ApiResponse<ViewingRecordDto>> createViewingRecord(
+            @AuthenticationPrincipal UserDetails currentUser,
+            @Valid @RequestBody ViewingRecordDto viewingRecordDto) {
+        
+        try {
+            ViewingRecordDto createdRecord = viewingRecordService.createViewingRecordFromDto(currentUser, viewingRecordDto);
+            return ResponseEntity.ok(ApiResponse.success("Viewing record created successfully", createdRecord));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage()));
+        }
+    }
+    
+    // Legacy endpoint for backwards compatibility
+    @PostMapping("/legacy")
+    public ResponseEntity<ApiResponse<ViewingRecord>> createViewingRecordLegacy(
             @AuthenticationPrincipal UserDetails currentUser,
             @Valid @RequestBody ViewingRecord viewingRecord) {
         

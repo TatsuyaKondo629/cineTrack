@@ -24,6 +24,7 @@ import {
 } from '@mui/material';
 import { Search as SearchIcon, Add as AddIcon, Favorite as FavoriteIcon, FavoriteBorder as FavoriteBorderIcon } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
+import TheaterSearch from '../components/TheaterSearch';
 import axios from 'axios';
 
 const Movies = () => {
@@ -37,6 +38,7 @@ const Movies = () => {
   const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
   const [wishlistStatus, setWishlistStatus] = useState({});
   const [wishlistLoading, setWishlistLoading] = useState({});
+  const [selectedTheater, setSelectedTheater] = useState(null);
   const [viewingRecord, setViewingRecord] = useState({
     rating: 0,
     viewingDate: new Date().toISOString().slice(0, 10),
@@ -164,6 +166,7 @@ const Movies = () => {
     }
     
     setSelectedMovie(movie);
+    setSelectedTheater(null);
     setViewingRecord({
       rating: 0,
       viewingDate: new Date().toISOString().slice(0, 10),
@@ -193,7 +196,8 @@ const Movies = () => {
         moviePosterPath: selectedMovie.poster_path,
         viewingDate: viewingRecord.viewingDate + 'T12:00:00', // 日付を日時に変換
         rating: viewingRecord.rating,
-        theater: viewingRecord.theater || null,
+        theater: selectedTheater ? (selectedTheater.displayName || selectedTheater.name) : viewingRecord.theater || null,
+        theaterId: selectedTheater ? selectedTheater.id : null, // 劇場IDを追加
         screeningFormat: viewingRecord.screeningFormat || null,
         review: viewingRecord.review || null
       };
@@ -212,6 +216,7 @@ const Movies = () => {
           severity: 'success'
         });
         setDialogOpen(false);
+        setSelectedTheater(null);
         setViewingRecord({
           rating: 0,
           viewingDate: new Date().toISOString().slice(0, 10),
@@ -765,12 +770,17 @@ const Movies = () => {
               required
             />
             
-            <TextField
-              label="映画館"
-              value={viewingRecord.theater}
-              onChange={(e) => setViewingRecord(prev => ({ ...prev, theater: e.target.value }))}
-              fullWidth
-              placeholder="例: TOHOシネマズ新宿"
+            <TheaterSearch
+              selectedTheater={selectedTheater}
+              onTheaterSelect={(theater) => {
+                setSelectedTheater(theater);
+                setViewingRecord(prev => ({ 
+                  ...prev, 
+                  theater: theater ? (theater.displayName || theater.name) : ''
+                }));
+              }}
+              variant="dropdown"
+              label="映画館を選択"
             />
             
             <FormControl fullWidth>

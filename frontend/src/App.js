@@ -6,6 +6,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Movies from './pages/Movies';
+import Theaters from './pages/Theaters';
 import Dashboard from './pages/Dashboard';
 import ViewingRecords from './pages/ViewingRecords';
 import Statistics from './pages/Statistics';
@@ -81,6 +82,7 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/movies" element={<Movies />} />
+              <Route path="/theaters" element={<Theaters />} />
               <Route 
                 path="/dashboard" 
                 element={
