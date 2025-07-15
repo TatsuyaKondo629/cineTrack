@@ -33,6 +33,17 @@ public class User implements UserDetails {
     @Size(min = 6)
     private String password;
     
+    @Size(max = 50)
+    @Column(name = "display_name")
+    private String displayName;
+    
+    @Size(max = 500)
+    @Column(name = "bio")
+    private String bio;
+    
+    @Column(name = "avatar_url")
+    private String avatarUrl;
+    
     @Column(name = "created_at")
     private LocalDateTime createdAt;
     
@@ -134,5 +145,29 @@ public class User implements UserDetails {
     
     public void setViewingRecords(List<ViewingRecord> viewingRecords) {
         this.viewingRecords = viewingRecords;
+    }
+    
+    public String getDisplayName() {
+        return displayName;
+    }
+    
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+    
+    public String getBio() {
+        return bio;
+    }
+    
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+    
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+    
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 }

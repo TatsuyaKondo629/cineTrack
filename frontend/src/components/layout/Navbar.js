@@ -30,7 +30,11 @@ import {
   PersonAdd as PersonAddIcon,
   Favorite as FavoriteIcon,
   Analytics as AnalyticsIcon,
-  LocationOn as TheaterIcon
+  LocationOn as TheaterIcon,
+  People as PeopleIcon,
+  Settings as SettingsIcon,
+  Timeline as TimelineIcon,
+  Group as GroupIcon
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
@@ -81,7 +85,10 @@ const Navbar = () => {
       { text: 'ダッシュボード', path: '/dashboard', icon: <DashboardIcon /> },
       { text: '視聴記録', path: '/viewing-records', icon: <ListIcon /> },
       { text: 'ウィッシュリスト', path: '/wishlist', icon: <FavoriteIcon /> },
-      { text: '統計・分析', path: '/statistics', icon: <AnalyticsIcon /> }
+      { text: '統計・分析', path: '/statistics', icon: <AnalyticsIcon /> },
+      { text: 'ユーザー検索', path: '/users', icon: <PeopleIcon /> },
+      { text: 'フォロー管理', path: '/follow-management', icon: <GroupIcon /> },
+      { text: 'アクティビティ', path: '/activity-feed', icon: <TimelineIcon /> }
     ] : []),
     ...(!isAuthenticated ? [
       { text: 'ログイン', path: '/login', icon: <LoginIcon /> },
@@ -192,6 +199,39 @@ const Navbar = () => {
                   >
                     ウィッシュリスト
                   </Button>
+                  <Button 
+                    color="inherit" 
+                    onClick={() => navigate('/users')}
+                    startIcon={<PeopleIcon />}
+                    sx={{ 
+                      fontWeight: isActive('/users') ? 'bold' : 'normal',
+                      textDecoration: isActive('/users') ? 'underline' : 'none'
+                    }}
+                  >
+                    ユーザー検索
+                  </Button>
+                  <Button 
+                    color="inherit" 
+                    onClick={() => navigate('/follow-management')}
+                    startIcon={<GroupIcon />}
+                    sx={{ 
+                      fontWeight: isActive('/follow-management') ? 'bold' : 'normal',
+                      textDecoration: isActive('/follow-management') ? 'underline' : 'none'
+                    }}
+                  >
+                    フォロー管理
+                  </Button>
+                  <Button 
+                    color="inherit" 
+                    onClick={() => navigate('/activity-feed')}
+                    startIcon={<TimelineIcon />}
+                    sx={{ 
+                      fontWeight: isActive('/activity-feed') ? 'bold' : 'normal',
+                      textDecoration: isActive('/activity-feed') ? 'underline' : 'none'
+                    }}
+                  >
+                    アクティビティ
+                  </Button>
                 </>
               )}
             </Box>
@@ -252,6 +292,28 @@ const Navbar = () => {
                     ウィッシュリスト
                   </MenuItem>
                 )}
+                {isMobile && (
+                  <MenuItem onClick={() => { navigate('/users'); handleMenuClose(); }}>
+                    <PeopleIcon sx={{ mr: 1 }} />
+                    ユーザー検索
+                  </MenuItem>
+                )}
+                {isMobile && (
+                  <MenuItem onClick={() => { navigate('/follow-management'); handleMenuClose(); }}>
+                    <GroupIcon sx={{ mr: 1 }} />
+                    フォロー管理
+                  </MenuItem>
+                )}
+                {isMobile && (
+                  <MenuItem onClick={() => { navigate('/activity-feed'); handleMenuClose(); }}>
+                    <TimelineIcon sx={{ mr: 1 }} />
+                    アクティビティ
+                  </MenuItem>
+                )}
+                <MenuItem onClick={() => { navigate('/profile/edit'); handleMenuClose(); }}>
+                  <SettingsIcon sx={{ mr: 1 }} />
+                  プロフィール編集
+                </MenuItem>
                 <MenuItem onClick={handleLogout}>
                   <AccountCircleIcon sx={{ mr: 1 }} />
                   ログアウト

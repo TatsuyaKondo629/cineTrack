@@ -43,4 +43,9 @@ public interface WishlistRepository extends JpaRepository<Wishlist, Long> {
      */
     @Query("SELECT w FROM Wishlist w WHERE w.user.id = :userId ORDER BY w.createdAt DESC")
     List<Wishlist> findByUserIdWithPagination(@Param("userId") Long userId);
+    
+    /**
+     * アクティビティフィード用：最新10件のウィッシュリストを取得
+     */
+    List<Wishlist> findTop10ByUserIdOrderByCreatedAtDesc(Long userId);
 }

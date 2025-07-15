@@ -11,6 +11,12 @@ import Dashboard from './pages/Dashboard';
 import ViewingRecords from './pages/ViewingRecords';
 import Statistics from './pages/Statistics';
 import Wishlist from './pages/Wishlist';
+import UserSearch from './pages/UserSearch';
+import UserProfile from './pages/UserProfile';
+import UserViewingRecords from './pages/UserViewingRecords';
+import ProfileEdit from './pages/ProfileEdit';
+import FollowManagement from './pages/FollowManagement';
+import ActivityFeed from './pages/ActivityFeed';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 
@@ -112,6 +118,54 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Wishlist />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/users" 
+                element={
+                  <ProtectedRoute>
+                    <UserSearch />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/users/:userId" 
+                element={
+                  <ProtectedRoute>
+                    <UserProfile />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/users/:userId/viewing-records" 
+                element={
+                  <ProtectedRoute>
+                    <UserViewingRecords />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/profile/edit" 
+                element={
+                  <ProtectedRoute>
+                    <ProfileEdit />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/follow-management" 
+                element={
+                  <ProtectedRoute>
+                    <FollowManagement />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/activity-feed" 
+                element={
+                  <ProtectedRoute>
+                    <ActivityFeed />
                   </ProtectedRoute>
                 } 
               />

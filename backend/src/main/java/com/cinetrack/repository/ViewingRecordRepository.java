@@ -37,4 +37,6 @@ public interface ViewingRecordRepository extends JpaRepository<ViewingRecord, Lo
     
     @Query("SELECT vr FROM ViewingRecord vr WHERE vr.user.id = :userId AND vr.theater IS NOT NULL AND vr.theater != '' ORDER BY vr.viewingDate DESC")
     List<ViewingRecord> findByUserIdWithTheater(@Param("userId") Long userId);
+    
+    List<ViewingRecord> findTop20ByUserIdOrderByCreatedAtDesc(Long userId);
 }

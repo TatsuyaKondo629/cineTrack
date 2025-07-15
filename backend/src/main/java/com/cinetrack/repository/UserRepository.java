@@ -1,6 +1,8 @@
 package com.cinetrack.repository;
 
 import com.cinetrack.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,4 +18,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByUsername(String username);
     
     boolean existsByEmail(String email);
+    
+    // ソーシャル機能用のメソッド
+    Page<User> findByIdNotOrderByUsernameAsc(Long excludeId, Pageable pageable);
+    
+    Page<User> findByUsernameContainingIgnoreCaseAndIdNotOrderByUsernameAsc(
+        String username, Long excludeId, Pageable pageable);
 }
