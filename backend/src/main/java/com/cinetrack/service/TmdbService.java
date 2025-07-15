@@ -8,9 +8,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class TmdbService {
+    
+    private static final Logger logger = LoggerFactory.getLogger(TmdbService.class);
     
     @Autowired
     @Qualifier("tmdbWebClient")
@@ -20,8 +24,10 @@ public class TmdbService {
     private String apiKey;
     
     public Mono<TmdbMovieListResponse> getTrendingMovies(String timeWindow, Integer page) {
+        logger.debug("TMDb API Key: {}", apiKey);
         // If no valid API key, return demo data
-        if (apiKey == null || apiKey.equals("demo_api_key_please_replace_with_actual_key")) {
+        if (apiKey == null || apiKey.isEmpty() || apiKey.equals("demo_api_key_please_replace_with_actual_key")) {
+            logger.warn("Invalid API key detected, returning demo data");
             return Mono.just(createDemoMovieResponse());
         }
         
@@ -40,7 +46,7 @@ public class TmdbService {
     
     public Mono<TmdbMovieDto> getMovieDetails(Long movieId) {
         // If no valid API key, return demo data
-        if (apiKey == null || apiKey.equals("demo_api_key_please_replace_with_actual_key")) {
+        if (apiKey == null || apiKey.isEmpty() || apiKey.equals("demo_api_key_please_replace_with_actual_key")) {
             return Mono.just(createDemoMovieDto(movieId));
         }
         
@@ -58,7 +64,7 @@ public class TmdbService {
     
     public Mono<TmdbMovieListResponse> searchMovies(String query, Integer page) {
         // If no valid API key, return demo data
-        if (apiKey == null || apiKey.equals("demo_api_key_please_replace_with_actual_key")) {
+        if (apiKey == null || apiKey.isEmpty() || apiKey.equals("demo_api_key_please_replace_with_actual_key")) {
             return Mono.just(createDemoMovieResponse());
         }
         
@@ -79,7 +85,7 @@ public class TmdbService {
     
     public Mono<TmdbMovieListResponse> getPopularMovies(Integer page) {
         // If no valid API key, return demo data
-        if (apiKey == null || apiKey.equals("demo_api_key_please_replace_with_actual_key")) {
+        if (apiKey == null || apiKey.isEmpty() || apiKey.equals("demo_api_key_please_replace_with_actual_key")) {
             return Mono.just(createDemoMovieResponse());
         }
         
@@ -98,7 +104,7 @@ public class TmdbService {
     
     public Mono<TmdbMovieListResponse> getNowPlayingMovies(Integer page) {
         // If no valid API key, return demo data
-        if (apiKey == null || apiKey.equals("demo_api_key_please_replace_with_actual_key")) {
+        if (apiKey == null || apiKey.isEmpty() || apiKey.equals("demo_api_key_please_replace_with_actual_key")) {
             return Mono.just(createDemoMovieResponse());
         }
         

@@ -3,6 +3,7 @@ package com.cinetrack.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.time.LocalDateTime;
 
@@ -47,6 +48,7 @@ public class ViewingRecord {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "theater_id")
+    @JsonIgnore
     private Theater theaterEntity;
     
     @Column(name = "screening_format")
