@@ -243,7 +243,8 @@ public class TheaterService {
             createTheater("T・ジョイ", "PRINCE品川", "東京都", "港区", "東京都港区高輪4-10-30 品川プリンスホテル アネックスタワー3F", "03-5421-1113", "https://www.t-joy.net/site_top/prince_shinagawa/", 35.6284, 139.7386),
             createTheater("新宿ピカデリー", null, "東京都", "新宿区", "東京都新宿区新宿3-15-15", "050-6861-3011", "https://www.smt-cinema.com/site/shinjuku/", 35.6902, 139.7043),
             createTheater("丸の内ピカデリー", null, "東京都", "千代田区", "東京都千代田区有楽町2-5-1 有楽町マリオン9F", "050-6875-0075", "https://www.smt-cinema.com/site/marunouchi/", 35.6732, 139.7633),
-            createTheater("TOHOシネマズ", "梅田", "大阪府", "大阪市北区", "大阪府大阪市北区角田町7-10 HEP NAVIO 7F・8F", "050-6868-5014", "https://www.tohotheater.jp/theater/014/", 34.7024, 135.4959)
+            createTheater("TOHOシネマズ", "梅田", "大阪府", "大阪市北区", "大阪府大阪市北区角田町7-10 HEP NAVIO 7F・8F", "050-6868-5014", "https://www.tohotheater.jp/theater/014/", 34.7024, 135.4959),
+            createTheater(null, "独立系映画館", "東京都", "渋谷区", "東京都渋谷区円山町1-5 KINOHAUS", "03-6455-2542", "https://www.kinohaus.jp/", 35.6580, 139.6959)
         };
         
         for (Theater theater : demoTheaters) {

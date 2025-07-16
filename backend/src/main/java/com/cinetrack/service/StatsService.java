@@ -129,9 +129,8 @@ public class StatsService {
         
         // お気に入りジャンル（仮データ）
         List<StatsDto.GenreStats> genreStats = getGenreStats(user);
-        if (!genreStats.isEmpty()) {
-            stats.setFavoriteGenre(genreStats.get(0).getGenre());
-        }
+        // recordsが空でない場合、genreStatsは必ず空でないため、直接取得
+        stats.setFavoriteGenre(genreStats.get(0).getGenre());
         
         return stats;
     }

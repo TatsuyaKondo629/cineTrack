@@ -123,7 +123,7 @@ public class TmdbService {
     }
     
     public String getImageUrl(String imagePath, String size) {
-        if (imagePath == null || imagePath.isEmpty()) {
+        if (imagePath == null || imagePath.trim().isEmpty()) {
             return null;
         }
         return "https://image.tmdb.org/t/p/" + size + imagePath;

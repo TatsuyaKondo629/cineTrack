@@ -47,16 +47,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             logger.debug("Processing authentication for user: " + username);
-            UserDetails userDetails = userService.loadUserByUsername(username);
-            
-            if (jwtUtil.validateToken(jwt, userDetails)) {
-                logger.debug("JWT token validated for user: " + username);
-                UsernamePasswordAuthenticationToken authToken = 
-                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
-            } else {
-                logger.debug("JWT token validation failed for user: " + username);
+            try {
+                UserDetails userDetails = userService.loadUserByUsername(username);
+                
+                if (jwtUtil.validateToken(jwt, userDetails)) {
+                    logger.debug("JWT token validated for user: " + username);
+                    UsernamePasswordAuthenticationToken authToken = 
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                } else {
+                    logger.debug("JWT token validation failed for user: " + username);
+                }
+            } catch (Exception e) {
+                logger.error("Authentication failed for user: " + username, e);
             }
         } else if (username != null) {
             logger.debug("Authentication already exists for user: " + username);

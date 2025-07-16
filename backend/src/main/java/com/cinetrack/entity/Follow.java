@@ -81,6 +81,9 @@ public class Follow {
         
         Follow follow = (Follow) o;
         return follower != null && following != null && 
+               follow.follower != null && follow.following != null &&
+               follower.getId() != null && following.getId() != null &&
+               follow.follower.getId() != null && follow.following.getId() != null &&
                follower.getId().equals(follow.follower.getId()) &&
                following.getId().equals(follow.following.getId());
     }
