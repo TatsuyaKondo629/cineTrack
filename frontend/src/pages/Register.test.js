@@ -27,6 +27,15 @@ const renderWithRouter = () => {
   );
 };
 
+// Helper functions to get form elements
+const getFormElements = () => ({
+  usernameInput: document.querySelector('input[name="username"]'),
+  emailInput: document.querySelector('input[name="email"]'),
+  passwordInput: document.querySelector('input[name="password"]'),
+  confirmPasswordInput: document.querySelector('input[name="confirmPassword"]'),
+  submitButton: screen.getByRole('button', { name: /登録/ })
+});
+
 describe('Register', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -41,21 +50,20 @@ describe('Register', () => {
     renderWithRouter();
     
     expect(screen.getByRole('heading', { name: '新規登録' })).toBeInTheDocument();
-    expect(screen.getByLabelText('ユーザー名')).toBeInTheDocument();
-    expect(screen.getByLabelText('メールアドレス')).toBeInTheDocument();
-    expect(screen.getByLabelText('パスワード')).toBeInTheDocument();
-    expect(screen.getByLabelText('パスワード（確認）')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '登録' })).toBeInTheDocument();
     expect(screen.getByText('すでにアカウントをお持ちの方はこちら')).toBeInTheDocument();
+    
+    const { usernameInput, emailInput, passwordInput, confirmPasswordInput } = getFormElements();
+    expect(usernameInput).toBeInTheDocument();
+    expect(emailInput).toBeInTheDocument();
+    expect(passwordInput).toBeInTheDocument();
+    expect(confirmPasswordInput).toBeInTheDocument();
   });
 
   test('updates form fields when user types', () => {
     renderWithRouter();
     
-    const usernameInput = screen.getByLabelText('ユーザー名');
-    const emailInput = screen.getByLabelText('メールアドレス');
-    const passwordInput = screen.getByLabelText('パスワード');
-    const confirmPasswordInput = screen.getByLabelText('パスワード（確認）');
+    const { usernameInput, emailInput, passwordInput, confirmPasswordInput } = getFormElements();
     
     fireEvent.change(usernameInput, { target: { value: 'testuser' } });
     fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
@@ -71,9 +79,11 @@ describe('Register', () => {
   test('shows error when passwords do not match', async () => {
     renderWithRouter();
     
-    fireEvent.change(screen.getByLabelText('パスワード'), { target: { value: 'password123' } });
-    fireEvent.change(screen.getByLabelText('パスワード（確認）'), { target: { value: 'different' } });
-    fireEvent.click(screen.getByRole('button', { name: '登録' }));
+    const { passwordInput, confirmPasswordInput, submitButton } = getFormElements();
+    
+    fireEvent.change(passwordInput, { target: { value: 'password123' } });
+    fireEvent.change(confirmPasswordInput, { target: { value: 'different' } });
+    fireEvent.click(submitButton);
     
     await waitFor(() => {
       expect(screen.getByText('パスワードが一致しません')).toBeInTheDocument();
@@ -85,9 +95,11 @@ describe('Register', () => {
   test('shows error when password is too short', async () => {
     renderWithRouter();
     
-    fireEvent.change(screen.getByLabelText('パスワード'), { target: { value: '123' } });
-    fireEvent.change(screen.getByLabelText('パスワード（確認）'), { target: { value: '123' } });
-    fireEvent.click(screen.getByRole('button', { name: '登録' }));
+    const { passwordInput, confirmPasswordInput, submitButton } = getFormElements();
+    
+    fireEvent.change(passwordInput, { target: { value: '123' } });
+    fireEvent.change(confirmPasswordInput, { target: { value: '123' } });
+    fireEvent.click(submitButton);
     
     await waitFor(() => {
       expect(screen.getByText('パスワードは6文字以上で入力してください')).toBeInTheDocument();
@@ -101,12 +113,14 @@ describe('Register', () => {
     
     renderWithRouter();
     
-    fireEvent.change(screen.getByLabelText('ユーザー名'), { target: { value: 'testuser' } });
-    fireEvent.change(screen.getByLabelText('メールアドレス'), { target: { value: 'test@example.com' } });
-    fireEvent.change(screen.getByLabelText('パスワード'), { target: { value: 'password123' } });
-    fireEvent.change(screen.getByLabelText('パスワード（確認）'), { target: { value: 'password123' } });
+    const { usernameInput, emailInput, passwordInput, confirmPasswordInput, submitButton } = getFormElements();
     
-    fireEvent.click(screen.getByRole('button', { name: '登録' }));
+    fireEvent.change(usernameInput, { target: { value: 'testuser' } });
+    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+    fireEvent.change(passwordInput, { target: { value: 'password123' } });
+    fireEvent.change(confirmPasswordInput, { target: { value: 'password123' } });
+    
+    fireEvent.click(submitButton);
     
     await waitFor(() => {
       expect(mockRegister).toHaveBeenCalledWith('testuser', 'test@example.com', 'password123');
@@ -118,12 +132,14 @@ describe('Register', () => {
     
     renderWithRouter();
     
-    fireEvent.change(screen.getByLabelText('ユーザー名'), { target: { value: 'testuser' } });
-    fireEvent.change(screen.getByLabelText('メールアドレス'), { target: { value: 'test@example.com' } });
-    fireEvent.change(screen.getByLabelText('パスワード'), { target: { value: 'password123' } });
-    fireEvent.change(screen.getByLabelText('パスワード（確認）'), { target: { value: 'password123' } });
+    const { usernameInput, emailInput, passwordInput, confirmPasswordInput, submitButton } = getFormElements();
     
-    fireEvent.click(screen.getByRole('button', { name: '登録' }));
+    fireEvent.change(usernameInput, { target: { value: 'testuser' } });
+    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+    fireEvent.change(passwordInput, { target: { value: 'password123' } });
+    fireEvent.change(confirmPasswordInput, { target: { value: 'password123' } });
+    
+    fireEvent.click(submitButton);
     
     await waitFor(() => {
       expect(screen.getByText('アカウントが作成されました。ログインページに移動します...')).toBeInTheDocument();
@@ -140,12 +156,14 @@ describe('Register', () => {
     
     renderWithRouter();
     
-    fireEvent.change(screen.getByLabelText('ユーザー名'), { target: { value: 'existinguser' } });
-    fireEvent.change(screen.getByLabelText('メールアドレス'), { target: { value: 'test@example.com' } });
-    fireEvent.change(screen.getByLabelText('パスワード'), { target: { value: 'password123' } });
-    fireEvent.change(screen.getByLabelText('パスワード（確認）'), { target: { value: 'password123' } });
+    const { usernameInput, emailInput, passwordInput, confirmPasswordInput, submitButton } = getFormElements();
     
-    fireEvent.click(screen.getByRole('button', { name: '登録' }));
+    fireEvent.change(usernameInput, { target: { value: 'existinguser' } });
+    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+    fireEvent.change(passwordInput, { target: { value: 'password123' } });
+    fireEvent.change(confirmPasswordInput, { target: { value: 'password123' } });
+    
+    fireEvent.click(submitButton);
     
     await waitFor(() => {
       expect(screen.getByText('ユーザー名が既に存在します')).toBeInTheDocument();
@@ -159,12 +177,14 @@ describe('Register', () => {
     
     renderWithRouter();
     
-    fireEvent.change(screen.getByLabelText('ユーザー名'), { target: { value: 'testuser' } });
-    fireEvent.change(screen.getByLabelText('メールアドレス'), { target: { value: 'test@example.com' } });
-    fireEvent.change(screen.getByLabelText('パスワード'), { target: { value: 'password123' } });
-    fireEvent.change(screen.getByLabelText('パスワード（確認）'), { target: { value: 'password123' } });
+    const { usernameInput, emailInput, passwordInput, confirmPasswordInput, submitButton } = getFormElements();
     
-    fireEvent.click(screen.getByRole('button', { name: '登録' }));
+    fireEvent.change(usernameInput, { target: { value: 'testuser' } });
+    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+    fireEvent.change(passwordInput, { target: { value: 'password123' } });
+    fireEvent.change(confirmPasswordInput, { target: { value: 'password123' } });
+    
+    fireEvent.click(submitButton);
     
     await waitFor(() => {
       expect(screen.getByText('登録に失敗しました')).toBeInTheDocument();
@@ -177,20 +197,22 @@ describe('Register', () => {
     
     renderWithRouter();
     
-    fireEvent.change(screen.getByLabelText('ユーザー名'), { target: { value: 'testuser' } });
-    fireEvent.change(screen.getByLabelText('メールアドレス'), { target: { value: 'test@example.com' } });
-    fireEvent.change(screen.getByLabelText('パスワード'), { target: { value: 'password123' } });
-    fireEvent.change(screen.getByLabelText('パスワード（確認）'), { target: { value: 'password123' } });
+    const { usernameInput, emailInput, passwordInput, confirmPasswordInput, submitButton } = getFormElements();
     
-    fireEvent.click(screen.getByRole('button', { name: '登録' }));
+    fireEvent.change(usernameInput, { target: { value: 'testuser' } });
+    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+    fireEvent.change(passwordInput, { target: { value: 'password123' } });
+    fireEvent.change(confirmPasswordInput, { target: { value: 'password123' } });
+    
+    fireEvent.click(submitButton);
     
     // Check that button shows loading text and form is disabled
     await waitFor(() => {
       expect(screen.getByRole('button', { name: '登録中...' })).toBeInTheDocument();
-      expect(screen.getByLabelText('ユーザー名')).toBeDisabled();
-      expect(screen.getByLabelText('メールアドレス')).toBeDisabled();
-      expect(screen.getByLabelText('パスワード')).toBeDisabled();
-      expect(screen.getByLabelText('パスワード（確認）')).toBeDisabled();
+      expect(usernameInput).toBeDisabled();
+      expect(emailInput).toBeDisabled();
+      expect(passwordInput).toBeDisabled();
+      expect(confirmPasswordInput).toBeDisabled();
     });
   });
 
@@ -199,13 +221,15 @@ describe('Register', () => {
     
     renderWithRouter();
     
-    // Fill form and submit to get error
-    fireEvent.change(screen.getByLabelText('ユーザー名'), { target: { value: 'testuser' } });
-    fireEvent.change(screen.getByLabelText('メールアドレス'), { target: { value: 'test@example.com' } });
-    fireEvent.change(screen.getByLabelText('パスワード'), { target: { value: 'password123' } });
-    fireEvent.change(screen.getByLabelText('パスワード（確認）'), { target: { value: 'password123' } });
+    const { usernameInput, emailInput, passwordInput, confirmPasswordInput, submitButton } = getFormElements();
     
-    fireEvent.click(screen.getByRole('button', { name: '登録' }));
+    // Fill form and submit to get error
+    fireEvent.change(usernameInput, { target: { value: 'testuser' } });
+    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+    fireEvent.change(passwordInput, { target: { value: 'password123' } });
+    fireEvent.change(confirmPasswordInput, { target: { value: 'password123' } });
+    
+    fireEvent.click(submitButton);
     
     await waitFor(() => {
       expect(screen.getByText('Error message')).toBeInTheDocument();
@@ -228,13 +252,15 @@ describe('Register', () => {
     
     renderWithRouter();
     
-    fireEvent.change(screen.getByLabelText('ユーザー名'), { target: { value: 'testuser' } });
-    fireEvent.change(screen.getByLabelText('メールアドレス'), { target: { value: 'test@example.com' } });
-    fireEvent.change(screen.getByLabelText('パスワード'), { target: { value: 'password123' } });
-    fireEvent.change(screen.getByLabelText('パスワード（確認）'), { target: { value: 'password123' } });
+    const { usernameInput, emailInput, passwordInput, confirmPasswordInput, submitButton } = getFormElements();
+    
+    fireEvent.change(usernameInput, { target: { value: 'testuser' } });
+    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+    fireEvent.change(passwordInput, { target: { value: 'password123' } });
+    fireEvent.change(confirmPasswordInput, { target: { value: 'password123' } });
     
     // Submit first time
-    fireEvent.click(screen.getByRole('button', { name: '登録' }));
+    fireEvent.click(submitButton);
     
     await waitFor(() => {
       expect(screen.getByRole('button', { name: '登録中...' })).toBeDisabled();

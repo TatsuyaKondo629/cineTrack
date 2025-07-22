@@ -150,4 +150,144 @@ describe('AuthContext', () => {
     expect(localStorage.getItem('token')).toBeNull();
     expect(localStorage.getItem('user')).toBeNull();
   });
+
+  test('throws error when useAuth is used outside AuthProvider', () => {
+    const TestComponentOutsideProvider = () => {
+      const { user } = useAuth();
+      return <div>{user?.username}</div>;
+    };
+
+    // This should throw an error
+    expect(() => {
+      render(<TestComponentOutsideProvider />);
+    }).toThrow('useAuth must be used within an AuthProvider');
+  });
+
+  test('failed login with response data message', async () => {
+    const mockError = {
+      response: {
+        data: {
+          message: 'Invalid credentials'
+        }
+      }
+    };
+    mockedAxios.post.mockRejectedValueOnce(mockError);
+
+    renderWithAuthProvider(<TestComponent />);
+    
+    fireEvent.click(screen.getByText('Login'));
+    
+    await waitFor(() => {
+      expect(screen.getByTestId('authenticated')).toHaveTextContent('Not Authenticated');
+    });
+
+    expect(mockedAxios.post).toHaveBeenCalledWith(
+      expect.stringContaining('/auth/login'),
+      {
+        email: 'test@example.com',
+        password: 'password'
+      }
+    );
+  });
+
+  test('failed login with unsuccessful response', async () => {
+    const mockResponse = {
+      data: {
+        success: false,
+        message: 'Login failed'
+      }
+    };
+    mockedAxios.post.mockResolvedValueOnce(mockResponse);
+
+    renderWithAuthProvider(<TestComponent />);
+    
+    fireEvent.click(screen.getByText('Login'));
+    
+    await waitFor(() => {
+      expect(screen.getByTestId('authenticated')).toHaveTextContent('Not Authenticated');
+    });
+  });
+
+  test('failed registration with response data message', async () => {
+    const mockError = {
+      response: {
+        data: {
+          message: 'Username already exists'
+        }
+      }
+    };
+    mockedAxios.post.mockRejectedValueOnce(mockError);
+
+    renderWithAuthProvider(<TestComponent />);
+    
+    fireEvent.click(screen.getByText('Register'));
+    
+    await waitFor(() => {
+      expect(mockedAxios.post).toHaveBeenCalledWith(
+        expect.stringContaining('/auth/register'),
+        {
+          username: 'testuser',
+          email: 'test@example.com',
+          password: 'password'
+        }
+      );
+    });
+  });
+
+  test('failed registration with unsuccessful response', async () => {
+    const mockResponse = {
+      data: {
+        success: false,
+        message: 'Registration failed'
+      }
+    };
+    mockedAxios.post.mockResolvedValueOnce(mockResponse);
+
+    renderWithAuthProvider(<TestComponent />);
+    
+    fireEvent.click(screen.getByText('Register'));
+    
+    await waitFor(() => {
+      expect(mockedAxios.post).toHaveBeenCalledWith(
+        expect.stringContaining('/auth/register'),
+        {
+          username: 'testuser',
+          email: 'test@example.com',
+          password: 'password'
+        }
+      );
+    });
+  });
+
+  test('initializes with loading true and sets to false after effect', async () => {
+    renderWithAuthProvider(<TestComponent />);
+    
+    // Initially should be loading
+    expect(screen.getByTestId('loading')).toHaveTextContent('Loading');
+    
+    // After useEffect, should not be loading
+    await waitFor(() => {
+      expect(screen.getByTestId('loading')).toHaveTextContent('Not Loading');
+    });
+  });
+
+  test('sets axios authorization header when token exists', () => {
+    localStorage.setItem('token', 'test-token');
+    localStorage.setItem('user', JSON.stringify({ username: 'testuser', email: 'test@example.com' }));
+    
+    renderWithAuthProvider(<TestComponent />);
+    
+    // Should set axios default header
+    expect(axios.defaults.headers.common['Authorization']).toBe('Bearer test-token');
+  });
+
+  test('removes axios authorization header when no token', () => {
+    // Clear any existing headers
+    delete axios.defaults.headers.common['Authorization'];
+    
+    renderWithAuthProvider(<TestComponent />);
+    
+    // Should not have authorization header
+    expect(axios.defaults.headers.common['Authorization']).toBeUndefined();
+  });
 });

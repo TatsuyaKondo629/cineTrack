@@ -269,6 +269,7 @@ const ViewingRecords = () => {
           >
             {filteredRecords.map((record) => (
                 <Card 
+                  key={record.id}
                   sx={{ 
                     height: '100%',
                     display: 'flex',
@@ -279,6 +280,7 @@ const ViewingRecords = () => {
                   <IconButton
                     sx={{ position: 'absolute', top: 8, right: 8, bgcolor: 'rgba(0,0,0,0.7)' }}
                     onClick={(e) => handleMenuOpen(e, record.id)}
+                    aria-label="more"
                   >
                     <MoreVertIcon sx={{ color: 'white' }} />
                   </IconButton>

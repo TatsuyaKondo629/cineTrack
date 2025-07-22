@@ -15,8 +15,9 @@ jest.mock('./reportWebVitals', () => mockReportWebVitals);
 
 // Mock document.getElementById
 const mockElement = { id: 'root' };
+const mockGetElementById = jest.fn(() => mockElement);
 Object.defineProperty(document, 'getElementById', {
-  value: jest.fn(() => mockElement),
+  value: mockGetElementById,
   writable: true
 });
 
@@ -24,6 +25,10 @@ describe('index.js', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jest.resetModules();
+    
+    // Reset mocks state
+    mockCreateRoot.mockReturnValue({ render: mockRender });
+    mockGetElementById.mockReturnValue(mockElement);
   });
 
   test('creates root element and renders App', () => {
@@ -31,6 +36,7 @@ describe('index.js', () => {
     require('./index');
 
     // Verify createRoot was called with correct element
+    expect(mockGetElementById).toHaveBeenCalledWith('root');
     expect(mockCreateRoot).toHaveBeenCalledWith(mockElement);
 
     // Verify render was called

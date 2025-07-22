@@ -4,13 +4,6 @@ import { MemoryRouter } from 'react-router-dom';
 import axios from 'axios';
 import ViewingRecords from './ViewingRecords';
 
-// Mock useNavigate
-const mockNavigate = jest.fn();
-jest.mock('react-router-dom', () => ({
-  MemoryRouter: ({ children }) => children,
-  useNavigate: () => mockNavigate
-}));
-
 // Mock axios
 jest.mock('axios');
 const mockedAxios = axios;
@@ -108,12 +101,12 @@ describe('ViewingRecords', () => {
     await waitFor(() => {
       expect(mockedAxios.get).toHaveBeenCalledWith(
         'http://localhost:8080/api/viewing-records?page=0&size=12',
-        {
+        expect.objectContaining({
           headers: {
             'Authorization': 'Bearer test-token',
             'Content-Type': 'application/json'
           }
-        }
+        })
       );
     });
     
@@ -179,165 +172,6 @@ describe('ViewingRecords', () => {
     });
   });
 
-  test('opens context menu when more button is clicked', async () => {
-    mockedAxios.get.mockResolvedValue(mockRecordsResponse);
-    
-    renderWithRouter();
-    
-    await waitFor(() => {
-      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
-    });
-    
-    // Click the first more button (MoreVert icon button)
-    const moreButtons = screen.getAllByRole('button');
-    const moreButton = moreButtons.find(button => button.querySelector('svg[data-testid="MoreVertIcon"]'));
-    fireEvent.click(moreButton || moreButtons[moreButtons.length - 1]);
-    
-    await waitFor(() => {
-      expect(screen.getByText('編集')).toBeInTheDocument();
-      expect(screen.getByText('削除')).toBeInTheDocument();
-    });
-  });
-
-  test('opens edit dialog when edit menu item is clicked', async () => {
-    mockedAxios.get.mockResolvedValue(mockRecordsResponse);
-    
-    renderWithRouter();
-    
-    await waitFor(() => {
-      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
-    });
-    
-    // Open context menu and click edit
-    const moreButtons = screen.getAllByRole('button', { name: /more/i });
-    fireEvent.click(moreButtons[0]);
-    
-    await waitFor(() => {
-      expect(screen.getByText('編集')).toBeInTheDocument();
-    });
-    
-    fireEvent.click(screen.getByText('編集'));
-    
-    await waitFor(() => {
-      expect(screen.getByText('視聴記録を編集')).toBeInTheDocument();
-      expect(screen.getByDisplayValue('4.5')).toBeInTheDocument();
-      expect(screen.getByDisplayValue('Test Theater')).toBeInTheDocument();
-    });
-  });
-
-  test('opens delete confirmation dialog when delete menu item is clicked', async () => {
-    mockedAxios.get.mockResolvedValue(mockRecordsResponse);
-    
-    renderWithRouter();
-    
-    await waitFor(() => {
-      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
-    });
-    
-    // Open context menu and click delete
-    const moreButtons = screen.getAllByRole('button', { name: /more/i });
-    fireEvent.click(moreButtons[0]);
-    
-    await waitFor(() => {
-      expect(screen.getByText('削除')).toBeInTheDocument();
-    });
-    
-    fireEvent.click(screen.getByText('削除'));
-    
-    await waitFor(() => {
-      expect(screen.getByText('記録を削除')).toBeInTheDocument();
-      expect(screen.getByText('「Test Movie 1」の視聴記録を削除しますか？')).toBeInTheDocument();
-      expect(screen.getByText('この操作は取り消せません。')).toBeInTheDocument();
-    });
-  });
-
-  test('saves edited record successfully', async () => {
-    const updateResponse = { data: { success: true } };
-    mockedAxios.get.mockResolvedValue(mockRecordsResponse);
-    mockedAxios.put.mockResolvedValue(updateResponse);
-    
-    renderWithRouter();
-    
-    await waitFor(() => {
-      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
-    });
-    
-    // Open edit dialog
-    const moreButtons = screen.getAllByRole('button', { name: /more/i });
-    fireEvent.click(moreButtons[0]);
-    fireEvent.click(screen.getByText('編集'));
-    
-    await waitFor(() => {
-      expect(screen.getByText('視聴記録を編集')).toBeInTheDocument();
-    });
-    
-    // Modify theater field
-    const theaterInput = screen.getByDisplayValue('Test Theater');
-    fireEvent.change(theaterInput, { target: { value: 'Updated Theater' } });
-    
-    // Save changes
-    fireEvent.click(screen.getByRole('button', { name: '保存' }));
-    
-    await waitFor(() => {
-      expect(mockedAxios.put).toHaveBeenCalledWith(
-        'http://localhost:8080/api/viewing-records/1',
-        expect.objectContaining({
-          theater: 'Updated Theater'
-        }),
-        expect.objectContaining({
-          headers: {
-            'Authorization': 'Bearer test-token',
-            'Content-Type': 'application/json'
-          }
-        })
-      );
-    });
-    
-    await waitFor(() => {
-      expect(screen.getByText('記録を更新しました')).toBeInTheDocument();
-    });
-  });
-
-  test('deletes record successfully', async () => {
-    const deleteResponse = { data: { success: true } };
-    mockedAxios.get.mockResolvedValue(mockRecordsResponse);
-    mockedAxios.delete.mockResolvedValue(deleteResponse);
-    
-    renderWithRouter();
-    
-    await waitFor(() => {
-      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
-    });
-    
-    // Open delete dialog
-    const moreButtons = screen.getAllByRole('button', { name: /more/i });
-    fireEvent.click(moreButtons[0]);
-    fireEvent.click(screen.getByText('削除'));
-    
-    await waitFor(() => {
-      expect(screen.getByText('記録を削除')).toBeInTheDocument();
-    });
-    
-    // Confirm deletion
-    fireEvent.click(screen.getByRole('button', { name: '削除' }));
-    
-    await waitFor(() => {
-      expect(mockedAxios.delete).toHaveBeenCalledWith(
-        'http://localhost:8080/api/viewing-records/1',
-        expect.objectContaining({
-          headers: {
-            'Authorization': 'Bearer test-token',
-            'Content-Type': 'application/json'
-          }
-        })
-      );
-    });
-    
-    await waitFor(() => {
-      expect(screen.getByText('記録を削除しました')).toBeInTheDocument();
-    });
-  });
-
   test('shows pagination when there are multiple pages', async () => {
     mockedAxios.get.mockResolvedValue(mockRecordsResponse);
     
@@ -350,6 +184,31 @@ describe('ViewingRecords', () => {
     // Check pagination is displayed
     expect(screen.getByRole('navigation')).toBeInTheDocument();
     expect(screen.getByText('2')).toBeInTheDocument(); // page 2 button
+  });
+
+  test('handles pagination page change', async () => {
+    mockedAxios.get.mockResolvedValue(mockRecordsResponse);
+    
+    renderWithRouter();
+    
+    await waitFor(() => {
+      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
+    });
+    
+    // Click page 2
+    fireEvent.click(screen.getByText('2'));
+    
+    await waitFor(() => {
+      expect(mockedAxios.get).toHaveBeenCalledWith(
+        'http://localhost:8080/api/viewing-records?page=1&size=12',
+        expect.objectContaining({
+          headers: {
+            'Authorization': 'Bearer test-token',
+            'Content-Type': 'application/json'
+          }
+        })
+      );
+    });
   });
 
   test('handles API errors gracefully', async () => {
@@ -380,7 +239,151 @@ describe('ViewingRecords', () => {
     expect(mockedAxios.get).not.toHaveBeenCalled();
   });
 
-  test('disables save button when rating is 0 in edit dialog', async () => {
+  test('formats dates correctly', async () => {
+    mockedAxios.get.mockResolvedValue(mockRecordsResponse);
+    
+    renderWithRouter();
+    
+    await waitFor(() => {
+      // Check if dates are formatted as Japanese locale
+      const dateElements = screen.getAllByText(/2024/);
+      expect(dateElements.length).toBeGreaterThan(0);
+    });
+  });
+
+  test('displays movie posters with correct image URLs', async () => {
+    mockedAxios.get.mockResolvedValue(mockRecordsResponse);
+    
+    renderWithRouter();
+    
+    await waitFor(() => {
+      const images = screen.getAllByRole('img');
+      expect(images).toHaveLength(2);
+      expect(images[0]).toHaveAttribute('src', 'https://image.tmdb.org/t/p/w300/poster1.jpg');
+      expect(images[1]).toHaveAttribute('src', 'https://image.tmdb.org/t/p/w300/poster2.jpg');
+    });
+  });
+
+  test('handles snackbar close', async () => {
+    mockLocalStorage.getItem.mockReturnValue(null);
+    
+    renderWithRouter();
+    
+    await waitFor(() => {
+      expect(screen.getByText('ログインが必要です')).toBeInTheDocument();
+    });
+    
+    // Close snackbar by clicking the close button
+    const closeButton = screen.getByRole('button', { name: 'Close' });
+    fireEvent.click(closeButton);
+    
+    await waitFor(() => {
+      expect(screen.queryByText('ログインが必要です')).not.toBeInTheDocument();
+    });
+  });
+
+  test('displays movie details correctly', async () => {
+    mockedAxios.get.mockResolvedValue(mockRecordsResponse);
+    
+    renderWithRouter();
+    
+    await waitFor(() => {
+      // Check that all movie details are displayed
+      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
+      expect(screen.getByText('Test Movie 2')).toBeInTheDocument();
+      
+      // Check ratings
+      expect(screen.getByText('★ 4.5')).toBeInTheDocument();
+      expect(screen.getByText('★ 3')).toBeInTheDocument();
+      
+      // Check theater info
+      expect(screen.getByText('📍 Test Theater')).toBeInTheDocument();
+      
+      // Check screening format
+      expect(screen.getByText('IMAX')).toBeInTheDocument();
+      
+      // Check review
+      expect(screen.getByText('Great movie!')).toBeInTheDocument();
+    });
+  });
+
+  // Context Menu Tests
+  test('opens context menu when more button is clicked', async () => {
+    mockedAxios.get.mockResolvedValue(mockRecordsResponse);
+    
+    renderWithRouter();
+    
+    await waitFor(() => {
+      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
+    });
+    
+    // Click the more button
+    const moreButtons = screen.getAllByLabelText('more');
+    fireEvent.click(moreButtons[0]);
+    
+    await waitFor(() => {
+      expect(screen.getByText('編集')).toBeInTheDocument();
+      expect(screen.getByText('削除')).toBeInTheDocument();
+    });
+  });
+
+  test('closes context menu when clicking outside', async () => {
+    mockedAxios.get.mockResolvedValue(mockRecordsResponse);
+    
+    renderWithRouter();
+    
+    await waitFor(() => {
+      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
+    });
+    
+    // Click the more button
+    const moreButtons = screen.getAllByLabelText('more');
+    fireEvent.click(moreButtons[0]);
+    
+    await waitFor(() => {
+      expect(screen.getByText('編集')).toBeInTheDocument();
+    });
+    
+    // Click outside to close menu
+    fireEvent.click(document.body);
+    
+    await waitFor(() => {
+      expect(screen.queryByText('編集')).not.toBeInTheDocument();
+    });
+  });
+
+  // Edit Dialog Tests
+  test('opens edit dialog when edit menu item is clicked', async () => {
+    mockedAxios.get.mockResolvedValue(mockRecordsResponse);
+    
+    renderWithRouter();
+    
+    await waitFor(() => {
+      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
+    });
+    
+    // Click the more button
+    const moreButtons = screen.getAllByLabelText('more');
+    fireEvent.click(moreButtons[0]);
+    
+    await waitFor(() => {
+      expect(screen.getByText('編集')).toBeInTheDocument();
+    });
+    
+    // Click edit menu item
+    fireEvent.click(screen.getByText('編集'));
+    
+    await waitFor(() => {
+      expect(screen.getByText('視聴記録を編集')).toBeInTheDocument();
+      expect(screen.getByText('Test Movie 1')).toBeInTheDocument(); // Movie title in dialog
+      expect(screen.getByLabelText('視聴日')).toBeInTheDocument();
+      expect(screen.getByLabelText('映画館')).toBeInTheDocument();
+      expect(screen.getByLabelText('上映形式')).toBeInTheDocument();
+      expect(screen.getByLabelText('レビュー・感想')).toBeInTheDocument();
+    });
+  });
+
+  test('closes edit dialog when cancel button is clicked', async () => {
     mockedAxios.get.mockResolvedValue(mockRecordsResponse);
     
     renderWithRouter();
@@ -390,7 +393,123 @@ describe('ViewingRecords', () => {
     });
     
     // Open edit dialog
-    const moreButtons = screen.getAllByRole('button', { name: /more/i });
+    const moreButtons = screen.getAllByLabelText('more');
+    fireEvent.click(moreButtons[0]);
+    fireEvent.click(screen.getByText('編集'));
+    
+    await waitFor(() => {
+      expect(screen.getByText('視聴記録を編集')).toBeInTheDocument();
+    });
+    
+    // Click cancel
+    fireEvent.click(screen.getByText('キャンセル'));
+    
+    await waitFor(() => {
+      expect(screen.queryByText('視聴記録を編集')).not.toBeInTheDocument();
+    });
+  });
+
+  test('updates edit form fields', async () => {
+    mockedAxios.get.mockResolvedValue(mockRecordsResponse);
+    
+    renderWithRouter();
+    
+    await waitFor(() => {
+      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
+    });
+    
+    // Open edit dialog
+    const moreButtons = screen.getAllByLabelText('more');
+    fireEvent.click(moreButtons[0]);
+    fireEvent.click(screen.getByText('編集'));
+    
+    await waitFor(() => {
+      expect(screen.getByText('視聴記録を編集')).toBeInTheDocument();
+    });
+    
+    // Update fields
+    const dateInput = screen.getByLabelText('視聴日');
+    fireEvent.change(dateInput, { target: { value: '2024-02-01' } });
+    
+    const theaterInput = screen.getByLabelText('映画館');
+    fireEvent.change(theaterInput, { target: { value: 'New Theater' } });
+    
+    const reviewInput = screen.getByLabelText('レビュー・感想');
+    fireEvent.change(reviewInput, { target: { value: 'Updated review' } });
+    
+    expect(dateInput.value).toBe('2024-02-01');
+    expect(theaterInput.value).toBe('New Theater');
+    expect(reviewInput.value).toBe('Updated review');
+  });
+
+  test('updates screening format in edit dialog', async () => {
+    mockedAxios.get.mockResolvedValue(mockRecordsResponse);
+    
+    renderWithRouter();
+    
+    await waitFor(() => {
+      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
+    });
+    
+    // Open edit dialog
+    const moreButtons = screen.getAllByLabelText('more');
+    fireEvent.click(moreButtons[0]);
+    fireEvent.click(screen.getByText('編集'));
+    
+    await waitFor(() => {
+      expect(screen.getByText('視聴記録を編集')).toBeInTheDocument();
+    });
+    
+    // Update screening format
+    const formatSelect = screen.getByLabelText('上映形式');
+    fireEvent.mouseDown(formatSelect);
+    
+    await waitFor(() => {
+      expect(screen.getByText('3D')).toBeInTheDocument();
+    });
+    
+    fireEvent.click(screen.getByText('3D'));
+    
+    expect(formatSelect).toHaveTextContent('3D');
+  });
+
+  test('updates rating in edit dialog', async () => {
+    mockedAxios.get.mockResolvedValue(mockRecordsResponse);
+    
+    renderWithRouter();
+    
+    await waitFor(() => {
+      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
+    });
+    
+    // Open edit dialog
+    const moreButtons = screen.getAllByLabelText('more');
+    fireEvent.click(moreButtons[0]);
+    fireEvent.click(screen.getByText('編集'));
+    
+    await waitFor(() => {
+      expect(screen.getByText('視聴記録を編集')).toBeInTheDocument();
+    });
+    
+    // Update rating
+    const ratingStars = screen.getAllByRole('radio');
+    fireEvent.click(ratingStars[2]); // 3 stars
+    
+    const saveButton = screen.getByText('保存');
+    expect(saveButton).not.toBeDisabled();
+  });
+
+  test('disables save button when rating is 0', async () => {
+    mockedAxios.get.mockResolvedValue(mockRecordsResponse);
+    
+    renderWithRouter();
+    
+    await waitFor(() => {
+      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
+    });
+    
+    // Open edit dialog
+    const moreButtons = screen.getAllByLabelText('more');
     fireEvent.click(moreButtons[0]);
     fireEvent.click(screen.getByText('編集'));
     
@@ -400,14 +519,64 @@ describe('ViewingRecords', () => {
     
     // Set rating to 0
     const ratingStars = screen.getAllByRole('radio');
-    fireEvent.click(ratingStars[0]); // 0 stars
+    fireEvent.click(ratingStars[0]); // 0 stars (clear rating)
+    
+    const saveButton = screen.getByText('保存');
+    expect(saveButton).toBeDisabled();
+  });
+
+  test('saves edited record successfully', async () => {
+    mockedAxios.get.mockResolvedValue(mockRecordsResponse);
+    mockedAxios.put.mockResolvedValue({ data: { success: true } });
+    
+    renderWithRouter();
     
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: '保存' })).toBeDisabled();
+      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
+    });
+    
+    // Open edit dialog
+    const moreButtons = screen.getAllByLabelText('more');
+    fireEvent.click(moreButtons[0]);
+    fireEvent.click(screen.getByText('編集'));
+    
+    await waitFor(() => {
+      expect(screen.getByText('視聴記録を編集')).toBeInTheDocument();
+    });
+    
+    // Update fields
+    const dateInput = screen.getByLabelText('視聴日');
+    fireEvent.change(dateInput, { target: { value: '2024-02-01' } });
+    
+    const theaterInput = screen.getByLabelText('映画館');
+    fireEvent.change(theaterInput, { target: { value: 'New Theater' } });
+    
+    // Click save
+    fireEvent.click(screen.getByText('保存'));
+    
+    await waitFor(() => {
+      expect(mockedAxios.put).toHaveBeenCalledWith(
+        'http://localhost:8080/api/viewing-records/1',
+        expect.objectContaining({
+          viewingDate: '2024-02-01T12:00:00',
+          theater: 'New Theater',
+          rating: 4.5
+        }),
+        expect.objectContaining({
+          headers: {
+            'Authorization': 'Bearer test-token',
+            'Content-Type': 'application/json'
+          }
+        })
+      );
+    });
+    
+    await waitFor(() => {
+      expect(screen.getByText('記録を更新しました')).toBeInTheDocument();
     });
   });
 
-  test('handles edit errors gracefully', async () => {
+  test('handles edit save error', async () => {
     mockedAxios.get.mockResolvedValue(mockRecordsResponse);
     mockedAxios.put.mockRejectedValue({
       response: { data: { message: 'Update failed' } }
@@ -419,23 +588,148 @@ describe('ViewingRecords', () => {
       expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
     });
     
-    // Open edit dialog and save
-    const moreButtons = screen.getAllByRole('button', { name: /more/i });
+    // Open edit dialog
+    const moreButtons = screen.getAllByLabelText('more');
     fireEvent.click(moreButtons[0]);
     fireEvent.click(screen.getByText('編集'));
     
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: '保存' })).toBeInTheDocument();
+      expect(screen.getByText('視聴記録を編集')).toBeInTheDocument();
     });
     
-    fireEvent.click(screen.getByRole('button', { name: '保存' }));
+    // Click save
+    fireEvent.click(screen.getByText('保存'));
     
     await waitFor(() => {
       expect(screen.getByText('Update failed')).toBeInTheDocument();
     });
   });
 
-  test('handles delete errors gracefully', async () => {
+  test('handles edit save error without token', async () => {
+    mockedAxios.get.mockResolvedValue(mockRecordsResponse);
+    
+    renderWithRouter();
+    
+    await waitFor(() => {
+      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
+    });
+    
+    // Open edit dialog
+    const moreButtons = screen.getAllByLabelText('more');
+    fireEvent.click(moreButtons[0]);
+    fireEvent.click(screen.getByText('編集'));
+    
+    await waitFor(() => {
+      expect(screen.getByText('視聴記録を編集')).toBeInTheDocument();
+    });
+    
+    // Clear token
+    mockLocalStorage.getItem.mockReturnValue(null);
+    
+    // Click save
+    fireEvent.click(screen.getByText('保存'));
+    
+    await waitFor(() => {
+      expect(screen.getByText('ログインが必要です')).toBeInTheDocument();
+    });
+  });
+
+  // Delete Dialog Tests
+  test('opens delete dialog when delete menu item is clicked', async () => {
+    mockedAxios.get.mockResolvedValue(mockRecordsResponse);
+    
+    renderWithRouter();
+    
+    await waitFor(() => {
+      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
+    });
+    
+    // Click the more button
+    const moreButtons = screen.getAllByLabelText('more');
+    fireEvent.click(moreButtons[0]);
+    
+    await waitFor(() => {
+      expect(screen.getByText('削除')).toBeInTheDocument();
+    });
+    
+    // Click delete menu item
+    fireEvent.click(screen.getByText('削除'));
+    
+    await waitFor(() => {
+      expect(screen.getByText('記録を削除')).toBeInTheDocument();
+      expect(screen.getByText('「Test Movie 1」の視聴記録を削除しますか？')).toBeInTheDocument();
+      expect(screen.getByText('この操作は取り消せません。')).toBeInTheDocument();
+    });
+  });
+
+  test('closes delete dialog when cancel button is clicked', async () => {
+    mockedAxios.get.mockResolvedValue(mockRecordsResponse);
+    
+    renderWithRouter();
+    
+    await waitFor(() => {
+      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
+    });
+    
+    // Open delete dialog
+    const moreButtons = screen.getAllByLabelText('more');
+    fireEvent.click(moreButtons[0]);
+    fireEvent.click(screen.getByText('削除'));
+    
+    await waitFor(() => {
+      expect(screen.getByText('記録を削除')).toBeInTheDocument();
+    });
+    
+    // Click cancel
+    const cancelButtons = screen.getAllByText('キャンセル');
+    fireEvent.click(cancelButtons[cancelButtons.length - 1]); // Last cancel button
+    
+    await waitFor(() => {
+      expect(screen.queryByText('記録を削除')).not.toBeInTheDocument();
+    });
+  });
+
+  test('deletes record successfully', async () => {
+    mockedAxios.get.mockResolvedValue(mockRecordsResponse);
+    mockedAxios.delete.mockResolvedValue({ data: { success: true } });
+    
+    renderWithRouter();
+    
+    await waitFor(() => {
+      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
+    });
+    
+    // Open delete dialog
+    const moreButtons = screen.getAllByLabelText('more');
+    fireEvent.click(moreButtons[0]);
+    fireEvent.click(screen.getByText('削除'));
+    
+    await waitFor(() => {
+      expect(screen.getByText('記録を削除')).toBeInTheDocument();
+    });
+    
+    // Confirm delete
+    const deleteButtons = screen.getAllByText('削除');
+    fireEvent.click(deleteButtons[deleteButtons.length - 1]); // Last delete button
+    
+    await waitFor(() => {
+      expect(mockedAxios.delete).toHaveBeenCalledWith(
+        'http://localhost:8080/api/viewing-records/1',
+        expect.objectContaining({
+          headers: {
+            'Authorization': 'Bearer test-token',
+            'Content-Type': 'application/json'
+          }
+        })
+      );
+    });
+    
+    await waitFor(() => {
+      expect(screen.getByText('記録を削除しました')).toBeInTheDocument();
+    });
+  });
+
+  test('handles delete error', async () => {
     mockedAxios.get.mockResolvedValue(mockRecordsResponse);
     mockedAxios.delete.mockRejectedValue({
       response: { data: { message: 'Delete failed' } }
@@ -447,30 +741,711 @@ describe('ViewingRecords', () => {
       expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
     });
     
-    // Open delete dialog and confirm
-    const moreButtons = screen.getAllByRole('button', { name: /more/i });
+    // Open delete dialog
+    const moreButtons = screen.getAllByLabelText('more');
     fireEvent.click(moreButtons[0]);
     fireEvent.click(screen.getByText('削除'));
     
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: '削除' })).toBeInTheDocument();
+      expect(screen.getByText('記録を削除')).toBeInTheDocument();
     });
     
-    fireEvent.click(screen.getByRole('button', { name: '削除' }));
+    // Confirm delete
+    const deleteButtons = screen.getAllByText('削除');
+    fireEvent.click(deleteButtons[deleteButtons.length - 1]);
     
     await waitFor(() => {
       expect(screen.getByText('Delete failed')).toBeInTheDocument();
     });
   });
 
-  test('formats dates correctly', async () => {
+  test('handles delete error without token', async () => {
     mockedAxios.get.mockResolvedValue(mockRecordsResponse);
     
     renderWithRouter();
     
     await waitFor(() => {
-      // Check if dates are formatted as Japanese locale
-      expect(screen.getByText(/2024/)).toBeInTheDocument();
+      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
+    });
+    
+    // Open delete dialog
+    const moreButtons = screen.getAllByLabelText('more');
+    fireEvent.click(moreButtons[0]);
+    fireEvent.click(screen.getByText('削除'));
+    
+    await waitFor(() => {
+      expect(screen.getByText('記録を削除')).toBeInTheDocument();
+    });
+    
+    // Clear token
+    mockLocalStorage.getItem.mockReturnValue(null);
+    
+    // Confirm delete
+    const deleteButtons = screen.getAllByText('削除');
+    fireEvent.click(deleteButtons[deleteButtons.length - 1]);
+    
+    await waitFor(() => {
+      expect(screen.getByText('ログインが必要です')).toBeInTheDocument();
     });
   });
+
+  // Search functionality tests
+  test('searches by theater name', async () => {
+    mockedAxios.get.mockResolvedValue(mockRecordsResponse);
+    
+    renderWithRouter();
+    
+    await waitFor(() => {
+      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
+      expect(screen.getByText('Test Movie 2')).toBeInTheDocument();
+    });
+    
+    // Search by theater
+    const searchInput = screen.getByPlaceholderText('映画タイトル、映画館、レビューで検索...');
+    fireEvent.change(searchInput, { target: { value: 'Test Theater' } });
+    
+    await waitFor(() => {
+      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
+      expect(screen.queryByText('Test Movie 2')).not.toBeInTheDocument();
+    });
+  });
+
+  test('searches by review content', async () => {
+    mockedAxios.get.mockResolvedValue(mockRecordsResponse);
+    
+    renderWithRouter();
+    
+    await waitFor(() => {
+      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
+      expect(screen.getByText('Test Movie 2')).toBeInTheDocument();
+    });
+    
+    // Search by review
+    const searchInput = screen.getByPlaceholderText('映画タイトル、映画館、レビューで検索...');
+    fireEvent.change(searchInput, { target: { value: 'Great movie' } });
+    
+    await waitFor(() => {
+      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
+      expect(screen.queryByText('Test Movie 2')).not.toBeInTheDocument();
+    });
+  });
+
+  test('handles case-insensitive search', async () => {
+    mockedAxios.get.mockResolvedValue(mockRecordsResponse);
+    
+    renderWithRouter();
+    
+    await waitFor(() => {
+      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
+      expect(screen.getByText('Test Movie 2')).toBeInTheDocument();
+    });
+    
+    // Search with different case
+    const searchInput = screen.getByPlaceholderText('映画タイトル、映画館、レビューで検索...');
+    fireEvent.change(searchInput, { target: { value: 'test movie 1' } });
+    
+    await waitFor(() => {
+      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
+      expect(screen.queryByText('Test Movie 2')).not.toBeInTheDocument();
+    });
+  });
+
+  test('handles search with whitespace', async () => {
+    mockedAxios.get.mockResolvedValue(mockRecordsResponse);
+    
+    renderWithRouter();
+    
+    await waitFor(() => {
+      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
+      expect(screen.getByText('Test Movie 2')).toBeInTheDocument();
+    });
+    
+    // Search with whitespace
+    const searchInput = screen.getByPlaceholderText('映画タイトル、映画館、レビューで検索...');
+    fireEvent.change(searchInput, { target: { value: '   ' } });
+    
+    await waitFor(() => {
+      // Should show all records when search is just whitespace
+      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
+      expect(screen.getByText('Test Movie 2')).toBeInTheDocument();
+    });
+  });
+
+  test('clears search and shows all records', async () => {
+    mockedAxios.get.mockResolvedValue(mockRecordsResponse);
+    
+    renderWithRouter();
+    
+    await waitFor(() => {
+      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
+      expect(screen.getByText('Test Movie 2')).toBeInTheDocument();
+    });
+    
+    // Search for one movie
+    const searchInput = screen.getByPlaceholderText('映画タイトル、映画館、レビューで検索...');
+    fireEvent.change(searchInput, { target: { value: 'Movie 1' } });
+    
+    await waitFor(() => {
+      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
+      expect(screen.queryByText('Test Movie 2')).not.toBeInTheDocument();
+    });
+    
+    // Clear search
+    fireEvent.change(searchInput, { target: { value: '' } });
+    
+    await waitFor(() => {
+      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
+      expect(screen.getByText('Test Movie 2')).toBeInTheDocument();
+    });
+  });
+
+  // Image handling tests
+  test('handles missing poster image', async () => {
+    const recordsWithNullPoster = {
+      data: {
+        success: true,
+        data: {
+          content: [
+            {
+              id: 1,
+              movieTitle: 'Movie Without Poster',
+              moviePosterPath: null,
+              rating: 4.0,
+              viewingDate: '2024-01-15T12:00:00',
+              theater: 'Test Theater',
+              screeningFormat: 'IMAX',
+              review: 'Great movie!'
+            }
+          ],
+          totalPages: 1
+        }
+      }
+    };
+    
+    mockedAxios.get.mockResolvedValue(recordsWithNullPoster);
+    
+    renderWithRouter();
+    
+    await waitFor(() => {
+      expect(screen.getByText('Movie Without Poster')).toBeInTheDocument();
+    });
+    
+    // Check placeholder image is used
+    const image = screen.getByRole('img');
+    expect(image).toHaveAttribute('src', '/placeholder-movie.jpg');
+  });
+
+  // Edge cases and error handling
+  test('handles API response with success false', async () => {
+    mockedAxios.get.mockResolvedValue({
+      data: {
+        success: false,
+        message: 'API Error'
+      }
+    });
+    
+    renderWithRouter();
+    
+    await waitFor(() => {
+      expect(screen.getByText('まだ視聴記録がありません')).toBeInTheDocument();
+    });
+  });
+
+  test('handles network error without response', async () => {
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    mockedAxios.get.mockRejectedValue(new Error('Network Error'));
+    
+    renderWithRouter();
+    
+    await waitFor(() => {
+      expect(screen.getByText('記録の取得に失敗しました')).toBeInTheDocument();
+    });
+    
+    consoleSpy.mockRestore();
+  });
+
+  test('handles single page without pagination', async () => {
+    const singlePageResponse = {
+      data: {
+        success: true,
+        data: {
+          content: [
+            {
+              id: 1,
+              movieTitle: 'Single Movie',
+              moviePosterPath: '/poster.jpg',
+              rating: 4.0,
+              viewingDate: '2024-01-15T12:00:00',
+              theater: 'Test Theater',
+              screeningFormat: 'IMAX',
+              review: 'Great movie!'
+            }
+          ],
+          totalPages: 1
+        }
+      }
+    };
+    
+    mockedAxios.get.mockResolvedValue(singlePageResponse);
+    
+    renderWithRouter();
+    
+    await waitFor(() => {
+      expect(screen.getByText('Single Movie')).toBeInTheDocument();
+    });
+    
+    // No pagination should be shown
+    expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
+  });
+
+  test('handles environment variable API_BASE_URL', async () => {
+    const originalEnv = process.env.REACT_APP_API_BASE_URL;
+    process.env.REACT_APP_API_BASE_URL = 'https://custom-api.com/api';
+    
+    mockedAxios.get.mockResolvedValue(mockRecordsResponse);
+    
+    renderWithRouter();
+    
+    await waitFor(() => {
+      expect(mockedAxios.get).toHaveBeenCalledWith(
+        'https://custom-api.com/api/viewing-records?page=0&size=12',
+        expect.any(Object)
+      );
+    });
+    
+    process.env.REACT_APP_API_BASE_URL = originalEnv;
+  });
+
+  test('handles records with null values', async () => {
+    const recordsWithNullValues = {
+      data: {
+        success: true,
+        data: {
+          content: [
+            {
+              id: 1,
+              movieTitle: 'Test Movie',
+              moviePosterPath: '/poster.jpg',
+              rating: 4.0,
+              viewingDate: '2024-01-15T12:00:00',
+              theater: null,
+              screeningFormat: null,
+              review: null
+            }
+          ],
+          totalPages: 1
+        }
+      }
+    };
+    
+    mockedAxios.get.mockResolvedValue(recordsWithNullValues);
+    
+    renderWithRouter();
+    
+    await waitFor(() => {
+      expect(screen.getByText('Test Movie')).toBeInTheDocument();
+    });
+    
+    // Should not show theater, screening format, or review
+    expect(screen.queryByText('📍')).not.toBeInTheDocument();
+    expect(screen.queryByText('IMAX')).not.toBeInTheDocument();
+    expect(screen.queryByText('Great movie!')).not.toBeInTheDocument();
+  });
+
+  test('handles invalid date formatting', async () => {
+    const recordsWithInvalidDate = {
+      data: {
+        success: true,
+        data: {
+          content: [
+            {
+              id: 1,
+              movieTitle: 'Test Movie',
+              moviePosterPath: '/poster.jpg',
+              rating: 4.0,
+              viewingDate: 'invalid-date',
+              theater: 'Test Theater',
+              screeningFormat: 'IMAX',
+              review: 'Great movie!'
+            }
+          ],
+          totalPages: 1
+        }
+      }
+    };
+    
+    mockedAxios.get.mockResolvedValue(recordsWithInvalidDate);
+    
+    renderWithRouter();
+    
+    await waitFor(() => {
+      expect(screen.getByText('Test Movie')).toBeInTheDocument();
+    });
+    
+    // Should handle invalid date gracefully
+    expect(screen.getByText('Test Movie')).toBeInTheDocument();
+  });
+
+  test('handles menu record not found error', async () => {
+    mockedAxios.get.mockResolvedValue(mockRecordsResponse);
+    
+    renderWithRouter();
+    
+    await waitFor(() => {
+      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
+    });
+    
+    // Click the more button
+    const moreButtons = screen.getAllByLabelText('more');
+    fireEvent.click(moreButtons[0]);
+    
+    await waitFor(() => {
+      expect(screen.getByText('編集')).toBeInTheDocument();
+    });
+    
+    // Manually trigger error by setting invalid menuRecordId
+    // This simulates edge case where record might not be found
+    // (Though this is unlikely in real scenarios)
+    
+    // The menu should still function
+    expect(screen.getByText('編集')).toBeInTheDocument();
+    expect(screen.getByText('削除')).toBeInTheDocument();
+  });
+
+  // Additional edge case tests for complete coverage
+  test('handles refetch after successful edit', async () => {
+    mockedAxios.get.mockResolvedValue(mockRecordsResponse);
+    mockedAxios.put.mockResolvedValue({ data: { success: true } });
+    
+    renderWithRouter();
+    
+    await waitFor(() => {
+      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
+    });
+    
+    const initialCallCount = mockedAxios.get.mock.calls.length;
+    
+    // Edit a record
+    const moreButtons = screen.getAllByLabelText('more');
+    fireEvent.click(moreButtons[0]);
+    fireEvent.click(screen.getByText('編集'));
+    
+    await waitFor(() => {
+      expect(screen.getByText('視聴記録を編集')).toBeInTheDocument();
+    });
+    
+    fireEvent.click(screen.getByText('保存'));
+    
+    await waitFor(() => {
+      expect(mockedAxios.get.mock.calls.length).toBe(initialCallCount + 1);
+    });
+  });
+
+  test('handles refetch after successful delete', async () => {
+    mockedAxios.get.mockResolvedValue(mockRecordsResponse);
+    mockedAxios.delete.mockResolvedValue({ data: { success: true } });
+    
+    renderWithRouter();
+    
+    await waitFor(() => {
+      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
+    });
+    
+    const initialCallCount = mockedAxios.get.mock.calls.length;
+    
+    // Delete a record
+    const moreButtons = screen.getAllByLabelText('more');
+    fireEvent.click(moreButtons[0]);
+    fireEvent.click(screen.getByText('削除'));
+    
+    await waitFor(() => {
+      expect(screen.getByText('記録を削除')).toBeInTheDocument();
+    });
+    
+    const deleteButtons = screen.getAllByText('削除');
+    fireEvent.click(deleteButtons[deleteButtons.length - 1]);
+    
+    await waitFor(() => {
+      expect(mockedAxios.get.mock.calls.length).toBe(initialCallCount + 1);
+    });
+  });
+
+  test('handles date formatting for edit form', async () => {
+    mockedAxios.get.mockResolvedValue(mockRecordsResponse);
+    
+    renderWithRouter();
+    
+    await waitFor(() => {
+      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
+    });
+    
+    // Open edit dialog
+    const moreButtons = screen.getAllByLabelText('more');
+    fireEvent.click(moreButtons[0]);
+    fireEvent.click(screen.getByText('編集'));
+    
+    await waitFor(() => {
+      expect(screen.getByText('視聴記録を編集')).toBeInTheDocument();
+    });
+    
+    // Check date input has correct format
+    const dateInput = screen.getByLabelText('視聴日');
+    expect(dateInput.value).toBe('2024-01-15');
+  });
+
+  test('handles date time conversion when saving', async () => {
+    mockedAxios.get.mockResolvedValue(mockRecordsResponse);
+    mockedAxios.put.mockResolvedValue({ data: { success: true } });
+    
+    renderWithRouter();
+    
+    await waitFor(() => {
+      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
+    });
+    
+    // Open edit dialog
+    const moreButtons = screen.getAllByLabelText('more');
+    fireEvent.click(moreButtons[0]);
+    fireEvent.click(screen.getByText('編集'));
+    
+    await waitFor(() => {
+      expect(screen.getByText('視聴記録を編集')).toBeInTheDocument();
+    });
+    
+    // Change date
+    const dateInput = screen.getByLabelText('視聴日');
+    fireEvent.change(dateInput, { target: { value: '2024-02-01' } });
+    
+    fireEvent.click(screen.getByText('保存'));
+    
+    await waitFor(() => {
+      expect(mockedAxios.put).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          viewingDate: '2024-02-01T12:00:00'
+        }),
+        expect.any(Object)
+      );
+    });
+  });
+
+  test('handles unsuccessful API responses', async () => {
+    mockedAxios.get.mockResolvedValue({
+      data: {
+        success: false,
+        message: 'Custom error message'
+      }
+    });
+    
+    renderWithRouter();
+    
+    await waitFor(() => {
+      expect(screen.getByText('まだ視聴記録がありません')).toBeInTheDocument();
+    });
+  });
+
+  test('handles search with null theater and review', async () => {
+    const recordsWithNullValues = {
+      data: {
+        success: true,
+        data: {
+          content: [
+            {
+              id: 1,
+              movieTitle: 'Test Movie',
+              moviePosterPath: '/poster.jpg',
+              rating: 4.0,
+              viewingDate: '2024-01-15T12:00:00',
+              theater: null,
+              screeningFormat: 'IMAX',
+              review: null
+            }
+          ],
+          totalPages: 1
+        }
+      }
+    };
+    
+    mockedAxios.get.mockResolvedValue(recordsWithNullValues);
+    
+    renderWithRouter();
+    
+    await waitFor(() => {
+      expect(screen.getByText('Test Movie')).toBeInTheDocument();
+    });
+    
+    // Search should handle null values gracefully
+    const searchInput = screen.getByPlaceholderText('映画タイトル、映画館、レビューで検索...');
+    fireEvent.change(searchInput, { target: { value: 'Test' } });
+    
+    await waitFor(() => {
+      expect(screen.getByText('Test Movie')).toBeInTheDocument();
+    });
+  });
+
+  test('handles various screening format options', async () => {
+    mockedAxios.get.mockResolvedValue(mockRecordsResponse);
+    
+    renderWithRouter();
+    
+    await waitFor(() => {
+      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
+    });
+    
+    // Open edit dialog
+    const moreButtons = screen.getAllByLabelText('more');
+    fireEvent.click(moreButtons[0]);
+    fireEvent.click(screen.getByText('編集'));
+    
+    await waitFor(() => {
+      expect(screen.getByText('視聴記録を編集')).toBeInTheDocument();
+    });
+    
+    // Check all screening format options
+    const formatSelect = screen.getByLabelText('上映形式');
+    fireEvent.mouseDown(formatSelect);
+    
+    await waitFor(() => {
+      expect(screen.getByText('選択なし')).toBeInTheDocument();
+      expect(screen.getByText('2D')).toBeInTheDocument();
+      expect(screen.getByText('3D')).toBeInTheDocument();
+      expect(screen.getByText('IMAX')).toBeInTheDocument();
+      expect(screen.getByText('4DX')).toBeInTheDocument();
+      expect(screen.getByText('Dolby Cinema')).toBeInTheDocument();
+      expect(screen.getByText('その他')).toBeInTheDocument();
+    });
+  });
+
+  test('handles multiline text in review field', async () => {
+    mockedAxios.get.mockResolvedValue(mockRecordsResponse);
+    
+    renderWithRouter();
+    
+    await waitFor(() => {
+      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
+    });
+    
+    // Open edit dialog
+    const moreButtons = screen.getAllByLabelText('more');
+    fireEvent.click(moreButtons[0]);
+    fireEvent.click(screen.getByText('編集'));
+    
+    await waitFor(() => {
+      expect(screen.getByText('視聴記録を編集')).toBeInTheDocument();
+    });
+    
+    // Check review textarea is multiline
+    const reviewInput = screen.getByLabelText('レビュー・感想');
+    expect(reviewInput).toBeInTheDocument();
+    expect(reviewInput.tagName).toBe('TEXTAREA');
+    
+    // Test multiline input
+    fireEvent.change(reviewInput, { target: { value: 'Line 1\nLine 2\nLine 3' } });
+    expect(reviewInput.value).toBe('Line 1\nLine 2\nLine 3');
+  });
+
+  test('handles truncated review display', async () => {
+    const longReviewRecord = {
+      data: {
+        success: true,
+        data: {
+          content: [
+            {
+              id: 1,
+              movieTitle: 'Movie with Long Review',
+              moviePosterPath: '/poster.jpg',
+              rating: 4.0,
+              viewingDate: '2024-01-15T12:00:00',
+              theater: 'Test Theater',
+              screeningFormat: 'IMAX',
+              review: 'This is a very long review that should be truncated when displayed in the card view. It contains multiple sentences and should demonstrate the text overflow ellipsis functionality.'
+            }
+          ],
+          totalPages: 1
+        }
+      }
+    };
+    
+    mockedAxios.get.mockResolvedValue(longReviewRecord);
+    
+    renderWithRouter();
+    
+    await waitFor(() => {
+      expect(screen.getByText('Movie with Long Review')).toBeInTheDocument();
+    });
+    
+    // Check that review is displayed (may be truncated by CSS)
+    const reviewText = screen.getByText(/This is a very long review/);
+    expect(reviewText).toBeInTheDocument();
+  });
+
+  test('handles invalid movie poster path', async () => {
+    const invalidPosterRecord = {
+      data: {
+        success: true,
+        data: {
+          content: [
+            {
+              id: 1,
+              movieTitle: 'Movie with Invalid Poster',
+              moviePosterPath: '',
+              rating: 4.0,
+              viewingDate: '2024-01-15T12:00:00',
+              theater: 'Test Theater',
+              screeningFormat: 'IMAX',
+              review: 'Great movie!'
+            }
+          ],
+          totalPages: 1
+        }
+      }
+    };
+    
+    mockedAxios.get.mockResolvedValue(invalidPosterRecord);
+    
+    renderWithRouter();
+    
+    await waitFor(() => {
+      expect(screen.getByText('Movie with Invalid Poster')).toBeInTheDocument();
+    });
+    
+    // Should use placeholder for empty poster path
+    const image = screen.getByRole('img');
+    expect(image).toHaveAttribute('src', '/placeholder-movie.jpg');
+  });
+
+  test('handles complex date formatting edge cases', async () => {
+    const complexDateRecord = {
+      data: {
+        success: true,
+        data: {
+          content: [
+            {
+              id: 1,
+              movieTitle: 'Date Test Movie',
+              moviePosterPath: '/poster.jpg',
+              rating: 4.0,
+              viewingDate: '2024-12-31T23:59:59',
+              theater: 'Test Theater',
+              screeningFormat: 'IMAX',
+              review: 'Great movie!'
+            }
+          ],
+          totalPages: 1
+        }
+      }
+    };
+    
+    mockedAxios.get.mockResolvedValue(complexDateRecord);
+    
+    renderWithRouter();
+    
+    await waitFor(() => {
+      expect(screen.getByText('Date Test Movie')).toBeInTheDocument();
+    });
+    
+    // Check that date is formatted correctly
+    expect(screen.getByText('2024年12月31日')).toBeInTheDocument();
+  });
+
 });

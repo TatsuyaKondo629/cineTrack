@@ -166,7 +166,7 @@ const UserViewingRecords = () => {
         </Alert>
       )}
 
-      {viewingRecords.length === 0 && !loading ? (
+      {viewingRecords && viewingRecords.length === 0 && !loading ? (
         <Box sx={{ textAlign: 'center', py: 8 }}>
           <Typography variant="h6" color="text.secondary">
             視聴記録がありません
@@ -175,7 +175,7 @@ const UserViewingRecords = () => {
       ) : (
         <>
           <Grid container spacing={3}>
-            {viewingRecords.map((record) => (
+            {viewingRecords && viewingRecords.map((record) => (
               <Grid item xs={12} sm={6} md={4} lg={3} key={record.id}>
                 <Card 
                   sx={{ 

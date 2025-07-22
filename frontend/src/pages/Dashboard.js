@@ -246,6 +246,7 @@ const Dashboard = () => {
           >
             {recentRecords.map((record) => (
                 <Card 
+                  key={record.id}
                   sx={{ 
                     height: '100%',
                     display: 'flex',

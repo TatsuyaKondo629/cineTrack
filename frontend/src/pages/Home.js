@@ -331,7 +331,7 @@ const Home = () => {
                 {selectedMovie.title}
               </Typography>
               {selectedMovie.original_title !== selectedMovie.title && (
-                <Typography variant="subtitle1" color="text.secondary">
+                <Typography variant="subtitle1" color="text.secondary" component="div">
                   {selectedMovie.original_title}
                 </Typography>
               )}

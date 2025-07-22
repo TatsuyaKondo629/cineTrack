@@ -9,6 +9,30 @@ jest.mock('../../context/AuthContext', () => ({
   useAuth: () => mockUseAuth()
 }));
 
+// Mock MUI components
+jest.mock('@mui/material', () => ({
+  CircularProgress: () => <div role="progressbar">Loading...</div>,
+  Box: ({ children, display, justifyContent, alignItems, minHeight, ...props }) => {
+    const styles = {};
+    if (display) styles.display = display;
+    if (justifyContent) styles.justifyContent = justifyContent;
+    if (alignItems) styles.alignItems = alignItems;
+    if (minHeight) styles.minHeight = minHeight;
+    
+    // Only add style attribute if we have styles
+    const finalProps = { ...props };
+    if (Object.keys(styles).length > 0) {
+      finalProps.style = styles;
+    }
+    
+    return (
+      <div {...finalProps}>
+        {children}
+      </div>
+    );
+  }
+}));
+
 // Test component to wrap as children
 const TestChild = () => <div data-testid="protected-content">Protected Content</div>;
 
@@ -75,10 +99,16 @@ describe('ProtectedRoute', () => {
 
     renderWithRouter();
     
-    const progressContainer = screen.getByRole('progressbar').closest('div');
-    expect(progressContainer).toHaveStyle({
-      display: 'flex'
-    });
+    const progressBar = screen.getByRole('progressbar');
+    const progressContainer = progressBar.parentElement;
+    
+    // Check that the container has the expected properties
+    expect(progressContainer).toBeInTheDocument();
+    expect(progressContainer).toHaveAttribute('style');
+    
+    // Check for flex display in the style attribute
+    const style = progressContainer.getAttribute('style');
+    expect(style).toContain('display: flex');
   });
 
   test('handles rapid state changes correctly', () => {
