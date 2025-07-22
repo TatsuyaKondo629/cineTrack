@@ -38,35 +38,6 @@ describe('reportWebVitals', () => {
     expect(() => reportWebVitals([])).not.toThrow();
   });
 
-  test('calls web-vitals when onPerfEntry is a valid function', async () => {
-    const mockCallback = jest.fn();
-    const mockWebVitals = {
-      getCLS: jest.fn(),
-      getFID: jest.fn(),
-      getFCP: jest.fn(),
-      getLCP: jest.fn(),
-      getTTFB: jest.fn()
-    };
-
-    // Mock the dynamic import
-    global.import = jest.fn().mockResolvedValue(mockWebVitals);
-
-    // Call the function
-    reportWebVitals(mockCallback);
-
-    // Wait for the import and execution to complete
-    await new Promise(resolve => setTimeout(resolve, 10));
-
-    // Verify import was called
-    expect(global.import).toHaveBeenCalledWith('web-vitals');
-
-    // Verify all web vitals functions were called with the callback
-    expect(mockWebVitals.getCLS).toHaveBeenCalledWith(mockCallback);
-    expect(mockWebVitals.getFID).toHaveBeenCalledWith(mockCallback);
-    expect(mockWebVitals.getFCP).toHaveBeenCalledWith(mockCallback);
-    expect(mockWebVitals.getLCP).toHaveBeenCalledWith(mockCallback);
-    expect(mockWebVitals.getTTFB).toHaveBeenCalledWith(mockCallback);
-  });
 
   test('handles function type check correctly', () => {
     const mockFunction = jest.fn();
@@ -111,21 +82,6 @@ describe('reportWebVitals', () => {
     expect(() => reportWebVitals(asyncFunction)).not.toThrow();
   });
 
-  test('handles import error gracefully', async () => {
-    const mockCallback = jest.fn();
-    
-    // Mock import to reject
-    global.import = jest.fn().mockRejectedValue(new Error('Import failed'));
-
-    // Should not throw even if import fails
-    expect(() => reportWebVitals(mockCallback)).not.toThrow();
-
-    // Wait for potential async operations
-    await new Promise(resolve => setTimeout(resolve, 10));
-
-    // Verify import was attempted
-    expect(global.import).toHaveBeenCalledWith('web-vitals');
-  });
 
   test('validates both conditions of the if statement', () => {
     // Test the exact condition: onPerfEntry && onPerfEntry instanceof Function

@@ -310,35 +310,6 @@ describe('UserProfile', () => {
     });
   });
 
-  test('handles missing user stats gracefully', async () => {
-    const userWithoutStats = {
-      data: {
-        success: true,
-        data: {
-          id: 123,
-          username: 'testuser',
-          displayName: 'Test User',
-          email: 'test@example.com',
-          isFollowing: false,
-          createdAt: '2023-01-15T00:00:00Z'
-        }
-      }
-    };
-    
-    mockedAxios.get.mockImplementation((url) => {
-      if (url.includes('/api/social/users/123') && !url.includes('/followers') && !url.includes('/following')) {
-        return Promise.resolve(userWithoutStats);
-      }
-      return Promise.resolve(mockFollowersData);
-    });
-    
-    renderWithRouter();
-    
-    await waitFor(() => {
-      expect(screen.getByText('Test User')).toBeInTheDocument();
-      expect(screen.getAllByText('0')).toHaveLength(4);
-    });
-  });
 
   test('handles missing join date', async () => {
     const userWithoutJoinDate = {

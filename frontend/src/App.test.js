@@ -13,6 +13,7 @@ jest.mock('react-router-dom', () => ({
   Navigate: () => <div data-testid="navigate" />,
   useNavigate: () => jest.fn(),
   useLocation: () => ({ pathname: '/', search: '', hash: '', state: null, key: 'default' }),
+  useParams: () => ({ userId: '1' }),
 }));
 
 // Mock AuthContext to provide basic auth functionality
@@ -40,8 +41,17 @@ jest.mock('./pages/Home', () => () => <div data-testid="home-page">Home</div>);
 jest.mock('./pages/Login', () => () => <div data-testid="login-page">Login</div>);
 jest.mock('./pages/Register', () => () => <div data-testid="register-page">Register</div>);
 jest.mock('./pages/Movies', () => () => <div data-testid="movies-page">Movies</div>);
+jest.mock('./pages/Theaters', () => () => <div data-testid="theaters-page">Theaters</div>);
 jest.mock('./pages/Dashboard', () => () => <div data-testid="dashboard-page">Dashboard</div>);
 jest.mock('./pages/ViewingRecords', () => () => <div data-testid="viewing-records-page">ViewingRecords</div>);
+jest.mock('./pages/Statistics', () => () => <div data-testid="statistics-page">Statistics</div>);
+jest.mock('./pages/Wishlist', () => () => <div data-testid="wishlist-page">Wishlist</div>);
+jest.mock('./pages/UserSearch', () => () => <div data-testid="user-search-page">UserSearch</div>);
+jest.mock('./pages/UserProfile', () => () => <div data-testid="user-profile-page">UserProfile</div>);
+jest.mock('./pages/UserViewingRecords', () => () => <div data-testid="user-viewing-records-page">UserViewingRecords</div>);
+jest.mock('./pages/ProfileEdit', () => () => <div data-testid="profile-edit-page">ProfileEdit</div>);
+jest.mock('./pages/FollowManagement', () => () => <div data-testid="follow-management-page">FollowManagement</div>);
+jest.mock('./pages/ActivityFeed', () => () => <div data-testid="activity-feed-page">ActivityFeed</div>);
 jest.mock('./components/layout/Navbar', () => () => <div data-testid="navbar">Navbar</div>);
 
 test('renders CineTrack application', () => {

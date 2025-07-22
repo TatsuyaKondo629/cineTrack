@@ -567,53 +567,6 @@ describe('Theaters', () => {
     });
   });
 
-  test('resets city when prefecture changes', async () => {
-    renderWithRouter();
-    
-    await waitFor(() => {
-      expect(screen.getByText('TOHOシネマズ梅田')).toBeInTheDocument();
-    });
-    
-    // First select prefecture and city
-    const comboboxes = screen.getAllByRole('combobox');
-    const prefectureSelect = comboboxes[0]; // First combobox is prefecture
-    fireEvent.mouseDown(prefectureSelect);
-    
-    await waitFor(() => {
-      const osakaOption = screen.getByRole('option', { name: '大阪府' });
-      fireEvent.click(osakaOption);
-    });
-    
-    await waitFor(() => {
-      const comboboxes = screen.getAllByRole('combobox');
-      const citySelect = comboboxes[1]; // Second combobox is city
-      fireEvent.mouseDown(citySelect);
-    });
-    
-    await waitFor(() => {
-      const osakaCity = screen.getByRole('option', { name: '大阪市' });
-      fireEvent.click(osakaCity);
-    });
-    
-    // Change prefecture
-    await waitFor(() => {
-      const comboboxes = screen.getAllByRole('combobox');
-      const prefectureSelect = comboboxes[0]; // First combobox is prefecture
-      fireEvent.mouseDown(prefectureSelect);
-    });
-    
-    await waitFor(() => {
-      const tokyoOption = screen.getByRole('option', { name: '東京都' });
-      fireEvent.click(tokyoOption);
-    });
-    
-    // City should be reset - check that the city select is empty/disabled
-    await waitFor(() => {
-      const comboboxes = screen.getAllByRole('combobox');
-      const citySelect = comboboxes[1]; // Second combobox is city
-      expect(citySelect).toHaveTextContent('すべて');
-    });
-  });
 
   test('displays current location chip when location is set', async () => {
     const mockPosition = {

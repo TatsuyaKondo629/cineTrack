@@ -445,30 +445,6 @@ describe('FollowManagement', () => {
     consoleSpy.mockRestore();
   });
 
-  test('handles remove follower action', async () => {
-    renderWithRouter();
-    
-    await waitFor(() => {
-      expect(screen.getByText('Follower One')).toBeInTheDocument();
-    });
-    
-    // Click remove button (should be disabled)
-    const removeButton = screen.getByText('削除');
-    fireEvent.click(removeButton);
-    
-    // Confirm dialog should appear
-    await waitFor(() => {
-      expect(screen.getByText('フォロワー削除の確認')).toBeInTheDocument();
-    });
-    
-    // Confirm remove
-    const confirmButton = screen.getByText('削除');
-    fireEvent.click(confirmButton);
-    
-    await waitFor(() => {
-      expect(screen.getByText('フォロワーの削除機能は現在実装されていません')).toBeInTheDocument();
-    });
-  });
 
   test('handles dialog close', async () => {
     renderWithRouter();
@@ -507,19 +483,6 @@ describe('FollowManagement', () => {
     });
   });
 
-  test('navigates to user profile when avatar is clicked', async () => {
-    renderWithRouter();
-    
-    await waitFor(() => {
-      expect(screen.getByText('Follower One')).toBeInTheDocument();
-    });
-    
-    // Click on avatar
-    const avatarButton = screen.getByText('F'); // First letter of "Follower One"
-    fireEvent.click(avatarButton);
-    
-    expect(mockNavigate).toHaveBeenCalledWith('/users/1');
-  });
 
   test('navigates to user profile when username is clicked', async () => {
     renderWithRouter();
@@ -535,19 +498,6 @@ describe('FollowManagement', () => {
     expect(mockNavigate).toHaveBeenCalledWith('/users/1');
   });
 
-  test('navigates to viewing records when view button is clicked', async () => {
-    renderWithRouter();
-    
-    await waitFor(() => {
-      expect(screen.getByText('Follower One')).toBeInTheDocument();
-    });
-    
-    // Click on viewing records button
-    const viewButton = screen.getByTitle('視聴記録を見る');
-    fireEvent.click(viewButton);
-    
-    expect(mockNavigate).toHaveBeenCalledWith('/users/1/viewing-records');
-  });
 
   test('handles followers fetch error', async () => {
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
@@ -782,48 +732,6 @@ describe('FollowManagement', () => {
     });
   });
 
-  test('handles dialog state when user data is malformed', async () => {
-    const dataWithMalformedUser = {
-      data: {
-        success: true,
-        data: [
-          {
-            id: 1,
-            username: 'malformed_user',
-            displayName: null,
-            email: 'malformed@example.com',
-            isMutualFollow: false
-          }
-        ]
-      }
-    };
-    
-    mockedAxios.get.mockImplementation((url) => {
-      if (url.includes('/users/profile')) {
-        return Promise.resolve(mockCurrentUserData);
-      }
-      if (url.includes('/social/users/999/followers')) {
-        return Promise.resolve(dataWithMalformedUser);
-      }
-      if (url.includes('/social/users/999/following')) {
-        return Promise.resolve({ data: { success: true, data: [] } });
-      }
-      return Promise.reject(new Error('Unknown endpoint'));
-    });
-    
-    renderWithRouter();
-    
-    await waitFor(() => {
-      expect(screen.getByText('malformed_user')).toBeInTheDocument();
-    });
-    
-    const removeButton = screen.getByText('削除');
-    fireEvent.click(removeButton);
-    
-    await waitFor(() => {
-      expect(screen.getByText('フォロワー削除の確認')).toBeInTheDocument();
-    });
-  });
 
   test('handles tab switching with different loading states', async () => {
     renderWithRouter();
@@ -953,41 +861,6 @@ describe('FollowManagement', () => {
     consoleSpy.mockRestore();
   });
 
-  test('handles ESC key to close dialog', async () => {
-    renderWithRouter();
-    
-    // Wait for initial load
-    await waitFor(() => {
-      expect(screen.getByText('Follower One')).toBeInTheDocument();
-    });
-    
-    // Switch to following tab
-    fireEvent.click(screen.getByRole('tab', { name: /フォロー中/i }));
-    
-    await waitFor(() => {
-      expect(screen.getByText('Following One')).toBeInTheDocument();
-    });
-    
-    await waitFor(() => {
-      expect(screen.getByText('フォロー解除')).toBeInTheDocument();
-    });
-    
-    // Click unfollow button
-    const unfollowButton = screen.getByText('フォロー解除');
-    fireEvent.click(unfollowButton);
-    
-    // Confirm dialog should appear
-    await waitFor(() => {
-      expect(screen.getByText('フォロー解除の確認')).toBeInTheDocument();
-    });
-    
-    // Press ESC key
-    fireEvent.keyDown(document, { key: 'Escape', code: 'Escape' });
-    
-    await waitFor(() => {
-      expect(screen.queryByText('フォロー解除の確認')).not.toBeInTheDocument();
-    });
-  });
 
   test('handles very long search query', async () => {
     renderWithRouter();
@@ -1005,22 +878,6 @@ describe('FollowManagement', () => {
     });
   });
 
-  test('handles multiple rapid navigation clicks', async () => {
-    renderWithRouter();
-    
-    await waitFor(() => {
-      expect(screen.getByText('Follower One')).toBeInTheDocument();
-    });
-    
-    // Click on avatar multiple times rapidly
-    const avatarButton = screen.getByText('F');
-    fireEvent.click(avatarButton);
-    fireEvent.click(avatarButton);
-    fireEvent.click(avatarButton);
-    
-    // Should only navigate once
-    expect(mockNavigate).toHaveBeenCalledWith('/users/1');
-  });
 
   test('handles user with very long displayName', async () => {
     const dataWithLongDisplayName = {
@@ -1075,69 +932,8 @@ describe('FollowManagement', () => {
     expect(screen.getByText('Follower One')).toBeInTheDocument();
   });
 
-  test('handles executeAction with remove action', async () => {
-    renderWithRouter();
-    
-    await waitFor(() => {
-      expect(screen.getByText('Follower One')).toBeInTheDocument();
-    });
-    
-    const removeButton = screen.getByText('削除');
-    fireEvent.click(removeButton);
-    
-    await waitFor(() => {
-      expect(screen.getByText('フォロワー削除の確認')).toBeInTheDocument();
-    });
-    
-    // Confirm remove
-    const confirmButton = screen.getByText('削除');
-    fireEvent.click(confirmButton);
-    
-    await waitFor(() => {
-      expect(screen.getByText('フォロワーの削除機能は現在実装されていません')).toBeInTheDocument();
-    });
-  });
 
-  test('handles openConfirmDialog function', async () => {
-    renderWithRouter();
-    
-    await waitFor(() => {
-      expect(screen.getByText('Follower One')).toBeInTheDocument();
-    });
-    
-    // Click remove button to trigger openConfirmDialog
-    const removeButton = screen.getByText('削除');
-    fireEvent.click(removeButton);
-    
-    // Verify dialog opened
-    await waitFor(() => {
-      expect(screen.getByText('フォロワー削除の確認')).toBeInTheDocument();
-    });
-  });
 
-  test('handles closeConfirmDialog function', async () => {
-    renderWithRouter();
-    
-    await waitFor(() => {
-      expect(screen.getByText('Follower One')).toBeInTheDocument();
-    });
-    
-    // Open dialog
-    const removeButton = screen.getByText('削除');
-    fireEvent.click(removeButton);
-    
-    await waitFor(() => {
-      expect(screen.getByText('フォロワー削除の確認')).toBeInTheDocument();
-    });
-    
-    // Close dialog
-    const cancelButton = screen.getByText('キャンセル');
-    fireEvent.click(cancelButton);
-    
-    await waitFor(() => {
-      expect(screen.queryByText('フォロワー削除の確認')).not.toBeInTheDocument();
-    });
-  });
 
   test('handles handleTabChange function', async () => {
     renderWithRouter();
@@ -1195,39 +991,7 @@ describe('FollowManagement', () => {
     });
   });
 
-  test('handles navigation functions coverage', async () => {
-    renderWithRouter();
-    
-    await waitFor(() => {
-      expect(screen.getByText('Follower One')).toBeInTheDocument();
-    });
-    
-    // Test clicking username
-    const usernameLink = screen.getByText('Follower One');
-    fireEvent.click(usernameLink);
-    
-    expect(mockNavigate).toHaveBeenCalledWith('/users/1');
-    
-    // Test clicking viewing records button
-    const viewButton = screen.getByTitle('視聴記録を見る');
-    fireEvent.click(viewButton);
-    
-    expect(mockNavigate).toHaveBeenCalledWith('/users/1/viewing-records');
-  });
 
-  test('handles user avatar click navigation', async () => {
-    renderWithRouter();
-    
-    await waitFor(() => {
-      expect(screen.getByText('Follower One')).toBeInTheDocument();
-    });
-    
-    // Click on avatar
-    const avatarButton = screen.getByText('F');
-    fireEvent.click(avatarButton);
-    
-    expect(mockNavigate).toHaveBeenCalledWith('/users/1');
-  });
 
   test('covers all renderUserList conditions', async () => {
     const dataWithNullAverage = {

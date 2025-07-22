@@ -1,0 +1,234 @@
+Date : 2025-07-17 05:16:30
+Directory : /Users/tatsuyakondo/Documents/SALTO/cineTrack
+Total : 149 files,  39508 codes, 1436 comments, 4056 blanks, all 45000 lines
+
+Languages
++-----------------+------------+------------+------------+------------+------------+
+| language        | files      | code       | comment    | blank      | total      |
++-----------------+------------+------------+------------+------------+------------+
+| JSON            |          4 |     18,670 |          0 |          3 |     18,673 |
+| Java            |         91 |     11,202 |      1,208 |      2,838 |     15,248 |
+| JavaScript      |         38 |      8,992 |        164 |      1,072 |     10,228 |
+| Markdown        |          3 |        197 |          0 |         78 |        275 |
+| XML             |          2 |        191 |         14 |         15 |        220 |
+| YAML            |          3 |        140 |          9 |         21 |        170 |
+| PostCSS         |          2 |         45 |          0 |          8 |         53 |
+| Shell Script    |          1 |         32 |         10 |         13 |         55 |
+| HTML            |          1 |         20 |         23 |          1 |         44 |
+| Docker          |          1 |         10 |          5 |          6 |         21 |
+| MS SQL          |          2 |          7 |          3 |          1 |         11 |
+| Java Properties |          1 |          2 |          0 |          0 |          2 |
++-----------------+------------+------------+------------+------------+------------+
+
+Directories
++---------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                                            | files      | code       | comment    | blank      | total      |
++---------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                                               |        149 |     39,508 |      1,436 |      4,056 |     45,000 |
+| . (Files)                                                                                                                       |          4 |        251 |         13 |         63 |        327 |
+| .claude                                                                                                                         |          1 |         63 |          0 |          0 |         63 |
+| backend                                                                                                                         |         98 |     11,491 |      1,236 |      2,876 |     15,603 |
+| backend (Files)                                                                                                                 |          2 |        200 |         19 |         21 |        240 |
+| backend/.mvn                                                                                                                    |          1 |          2 |          0 |          0 |          2 |
+| backend/.mvn/wrapper                                                                                                            |          1 |          2 |          0 |          0 |          2 |
+| backend/src                                                                                                                     |         95 |     11,289 |      1,217 |      2,855 |     15,361 |
+| backend/src/main                                                                                                                |         50 |      4,167 |        309 |      1,118 |      5,594 |
+| backend/src/main/java                                                                                                           |         47 |      4,118 |        303 |      1,109 |      5,530 |
+| backend/src/main/java/com                                                                                                       |         47 |      4,118 |        303 |      1,109 |      5,530 |
+| backend/src/main/java/com/cinetrack                                                                                             |         47 |      4,118 |        303 |      1,109 |      5,530 |
+| backend/src/main/java/com/cinetrack (Files)                                                                                     |          1 |          9 |          0 |          3 |         12 |
+| backend/src/main/java/com/cinetrack/config                                                                                      |          2 |         95 |          0 |         17 |        112 |
+| backend/src/main/java/com/cinetrack/controller                                                                                  |          8 |        878 |         87 |        163 |      1,128 |
+| backend/src/main/java/com/cinetrack/dto                                                                                         |         17 |      1,200 |         23 |        401 |      1,624 |
+| backend/src/main/java/com/cinetrack/dto (Files)                                                                                 |         13 |        979 |         21 |        311 |      1,311 |
+| backend/src/main/java/com/cinetrack/dto/tmdb                                                                                    |          4 |        221 |          2 |         90 |        313 |
+| backend/src/main/java/com/cinetrack/entity                                                                                      |          5 |        620 |         10 |        194 |        824 |
+| backend/src/main/java/com/cinetrack/repository                                                                                  |          5 |        142 |         42 |         58 |        242 |
+| backend/src/main/java/com/cinetrack/security                                                                                    |          2 |        129 |          0 |         28 |        157 |
+| backend/src/main/java/com/cinetrack/service                                                                                     |          7 |      1,045 |        141 |        245 |      1,431 |
+| backend/src/main/resources                                                                                                      |          3 |         49 |          6 |          9 |         64 |
+| backend/src/main/resources (Files)                                                                                              |          1 |         42 |          3 |          8 |         53 |
+| backend/src/main/resources/db                                                                                                   |          2 |          7 |          3 |          1 |         11 |
+| backend/src/main/resources/db/migration                                                                                         |          2 |          7 |          3 |          1 |         11 |
+| backend/src/test                                                                                                                |         45 |      7,122 |        908 |      1,737 |      9,767 |
+| backend/src/test/java                                                                                                           |         44 |      7,084 |        905 |      1,729 |      9,718 |
+| backend/src/test/java/com                                                                                                       |         44 |      7,084 |        905 |      1,729 |      9,718 |
+| backend/src/test/java/com/cinetrack                                                                                             |         44 |      7,084 |        905 |      1,729 |      9,718 |
+| backend/src/test/java/com/cinetrack/config                                                                                      |          4 |        112 |          0 |         27 |        139 |
+| backend/src/test/java/com/cinetrack/controller                                                                                  |          9 |      2,656 |        270 |        566 |      3,492 |
+| backend/src/test/java/com/cinetrack/dto                                                                                         |         17 |        869 |          7 |        196 |      1,072 |
+| backend/src/test/java/com/cinetrack/dto (Files)                                                                                 |         13 |        724 |          7 |        158 |        889 |
+| backend/src/test/java/com/cinetrack/dto/tmdb                                                                                    |          4 |        145 |          0 |         38 |        183 |
+| backend/src/test/java/com/cinetrack/entity                                                                                      |          5 |        469 |         21 |        118 |        608 |
+| backend/src/test/java/com/cinetrack/security                                                                                    |          2 |        372 |         89 |        126 |        587 |
+| backend/src/test/java/com/cinetrack/service                                                                                     |          7 |      2,606 |        518 |        696 |      3,820 |
+| backend/src/test/resources                                                                                                      |          1 |         38 |          3 |          8 |         49 |
+| frontend                                                                                                                        |         46 |     27,703 |        187 |      1,117 |     29,007 |
+| frontend (Files)                                                                                                                |          3 |     18,620 |          0 |         35 |     18,655 |
+| frontend/public                                                                                                                 |          2 |         45 |         23 |          2 |         70 |
+| frontend/src                                                                                                                    |         41 |      9,038 |        164 |      1,080 |     10,282 |
+| frontend/src (Files)                                                                                                            |         10 |        414 |         30 |         60 |        504 |
+| frontend/src/__mocks__                                                                                                          |          2 |         46 |          0 |          2 |         48 |
+| frontend/src/components                                                                                                         |          5 |        995 |         17 |         93 |      1,105 |
+| frontend/src/components (Files)                                                                                                 |          1 |        446 |          7 |         38 |        491 |
+| frontend/src/components/auth                                                                                                    |          2 |        104 |          6 |         27 |        137 |
+| frontend/src/components/layout                                                                                                  |          2 |        445 |          4 |         28 |        477 |
+| frontend/src/context                                                                                                            |          2 |        204 |         13 |         45 |        262 |
+| frontend/src/pages                                                                                                              |         22 |      7,379 |        104 |        880 |      8,363 |
++---------------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++---------------------------------------------------------------------------------------------------------------------------------+-----------------+------------+------------+------------+------------+
+| filename                                                                                                                        | language        | code       | comment    | blank      | total      |
++---------------------------------------------------------------------------------------------------------------------------------+-----------------+------------+------------+------------+------------+
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/.claude/settings.local.json                                                       | JSON            |         63 |          0 |          0 |         63 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/CLAUDE.md                                                                         | Markdown        |         76 |          0 |         24 |        100 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/README.md                                                                         | Markdown        |         83 |          0 |         21 |        104 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/.mvn/wrapper/maven-wrapper.properties                                     | Java Properties |          2 |          0 |          0 |          2 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/Dockerfile                                                                | Docker          |         10 |          5 |          6 |         21 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/pom.xml                                                                   | XML             |        190 |         14 |         15 |        219 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/CineTrackApplication.java                     | Java            |          9 |          0 |          3 |         12 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/config/SecurityConfig.java                    | Java            |         78 |          0 |         13 |         91 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/config/WebClientConfig.java                   | Java            |         17 |          0 |          4 |         21 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/controller/AuthController.java                | Java            |         90 |          2 |         23 |        115 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/controller/MovieController.java               | Java            |         72 |          0 |         14 |         86 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/controller/SocialController.java              | Java            |        142 |         27 |         22 |        191 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/controller/StatsController.java               | Java            |         86 |          0 |         20 |        106 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/controller/TheaterController.java             | Java            |        143 |         33 |         17 |        193 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/controller/UserController.java                | Java            |         48 |          6 |         12 |         66 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/controller/ViewingRecordController.java       | Java            |        182 |          1 |         36 |        219 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/controller/WishlistController.java            | Java            |        115 |         18 |         19 |        152 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/dto/ActivityDto.java                          | Java            |        108 |          2 |         33 |        143 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/dto/ApiResponse.java                          | Java            |         43 |          0 |         14 |         57 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/dto/AuthResponse.java                         | Java            |         37 |          0 |         12 |         49 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/dto/LoginRequest.java                         | Java            |         27 |          0 |         10 |         37 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/dto/RegisterRequest.java                      | Java            |         39 |          0 |         13 |         52 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/dto/StatsDto.java                             | Java            |         73 |          0 |         17 |         90 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/dto/TheaterDto.java                           | Java            |        140 |          5 |         34 |        179 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/dto/UserDto.java                              | Java            |        118 |          4 |         40 |        162 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/dto/UserUpdateRequest.java                    | Java            |         60 |          2 |         24 |         86 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/dto/ViewingRecordCreateRequest.java           | Java            |         79 |          2 |         30 |        111 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/dto/ViewingRecordDto.java                     | Java            |        127 |          3 |         43 |        173 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/dto/ViewingRecordUpdateRequest.java           | Java            |         55 |          2 |         21 |         78 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/dto/WishlistDto.java                          | Java            |         73 |          1 |         20 |         94 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/dto/tmdb/TmdbGenreDto.java                    | Java            |         22 |          0 |          8 |         30 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/dto/tmdb/TmdbMovieDto.java                    | Java            |        128 |          2 |         52 |        182 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/dto/tmdb/TmdbMovieListResponse.java           | Java            |         36 |          0 |         16 |         52 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/dto/tmdb/TmdbProductionCompanyDto.java        | Java            |         35 |          0 |         14 |         49 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/entity/Follow.java                            | Java            |         71 |          3 |         21 |         95 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/entity/Theater.java                           | Java            |        155 |          3 |         50 |        208 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/entity/User.java                              | Java            |        131 |          2 |         40 |        173 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/entity/ViewingRecord.java                     | Java            |        146 |          1 |         46 |        193 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/entity/Wishlist.java                          | Java            |        117 |          1 |         37 |        155 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/repository/FollowRepository.java              | Java            |         29 |          9 |         12 |         50 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/repository/TheaterRepository.java             | Java            |         47 |         11 |         14 |         72 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/repository/UserRepository.java                | Java            |         17 |          1 |          9 |         27 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/repository/ViewingRecordRepository.java       | Java            |         29 |          0 |         13 |         42 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/repository/WishlistRepository.java            | Java            |         20 |         21 |         10 |         51 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/security/JwtAuthenticationFilter.java         | Java            |         59 |          0 |         12 |         71 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/security/JwtUtil.java                         | Java            |         70 |          0 |         16 |         86 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/service/SocialService.java                    | Java            |        214 |         43 |         55 |        312 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/service/StatsService.java                     | Java            |        124 |          8 |         29 |        161 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/service/TheaterService.java                   | Java            |        195 |         52 |         35 |        282 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/service/TmdbService.java                      | Java            |        161 |          7 |         24 |        192 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/service/UserService.java                      | Java            |         84 |          4 |         24 |        112 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/service/ViewingRecordService.java             | Java            |        203 |          5 |         63 |        271 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/java/com/cinetrack/service/WishlistService.java                  | Java            |         64 |         22 |         15 |        101 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/resources/application.yml                                        | YAML            |         42 |          3 |          8 |         53 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/resources/db/migration/V3__add_theater_id_to_viewing_records.sql | MS SQL          |          3 |          2 |          1 |          6 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/main/resources/db/migration/V4__add_user_profile_fields.sql           | MS SQL          |          4 |          1 |          0 |          5 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/config/TestSecurityConfig.java                | Java            |         35 |          0 |          7 |         42 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/config/TestUserDetails.java                   | Java            |         39 |          0 |         11 |         50 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/config/TestUserDetailsArgumentResolver.java   | Java            |         20 |          0 |          4 |         24 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/config/TestUserDetailsConfig.java             | Java            |         18 |          0 |          5 |         23 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/controller/AuthControllerIntegrationTest.java | Java            |        110 |         13 |         26 |        149 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/controller/AuthControllerTest.java            | Java            |        200 |         24 |         43 |        267 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/controller/MovieControllerTest.java           | Java            |        213 |         23 |         45 |        281 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/controller/SocialControllerTest.java          | Java            |        321 |         44 |         76 |        441 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/controller/StatsControllerTest.java           | Java            |        275 |         32 |         56 |        363 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/controller/TheaterControllerTest.java         | Java            |        364 |         54 |         96 |        514 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/controller/UserControllerTest.java            | Java            |        250 |         26 |         48 |        324 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/controller/ViewingRecordControllerTest.java   | Java            |        530 |         12 |         96 |        638 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/controller/WishlistControllerTest.java        | Java            |        393 |         42 |         80 |        515 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/dto/ActivityDtoTest.java                      | Java            |         67 |          0 |         11 |         78 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/dto/ApiResponseTest.java                      | Java            |         59 |          0 |         18 |         77 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/dto/AuthResponseTest.java                     | Java            |         33 |          0 |         10 |         43 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/dto/LoginRequestTest.java                     | Java            |         25 |          0 |         10 |         35 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/dto/RegisterRequestTest.java                  | Java            |         29 |          0 |         10 |         39 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/dto/StatsDtoTest.java                         | Java            |        101 |          0 |         20 |        121 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/dto/TheaterDtoTest.java                       | Java            |        106 |          7 |         20 |        133 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/dto/UserDtoTest.java                          | Java            |         67 |          0 |         11 |         78 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/dto/UserUpdateRequestTest.java                | Java            |         34 |          0 |          8 |         42 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/dto/ViewingRecordCreateRequestTest.java       | Java            |         42 |          0 |          9 |         51 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/dto/ViewingRecordDtoTest.java                 | Java            |         75 |          0 |         11 |         86 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/dto/ViewingRecordUpdateRequestTest.java       | Java            |         33 |          0 |          9 |         42 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/dto/WishlistDtoTest.java                      | Java            |         53 |          0 |         11 |         64 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/dto/tmdb/TmdbGenreDtoTest.java                | Java            |         25 |          0 |         10 |         35 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/dto/tmdb/TmdbMovieDtoTest.java                | Java            |         65 |          0 |         10 |         75 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/dto/tmdb/TmdbMovieListResponseTest.java       | Java            |         30 |          0 |         10 |         40 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/dto/tmdb/TmdbProductionCompanyDtoTest.java    | Java            |         25 |          0 |          8 |         33 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/entity/FollowTest.java                        | Java            |         98 |         10 |         35 |        143 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/entity/TheaterTest.java                       | Java            |        111 |          7 |         27 |        145 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/entity/UserTest.java                          | Java            |         85 |          2 |         20 |        107 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/entity/ViewingRecordTest.java                 | Java            |         90 |          1 |         18 |        109 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/entity/WishlistTest.java                      | Java            |         85 |          1 |         18 |        104 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/security/JwtAuthenticationFilterTest.java     | Java            |        195 |         38 |         67 |        300 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/security/JwtUtilTest.java                     | Java            |        177 |         51 |         59 |        287 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/service/SocialServiceTest.java                | Java            |        451 |         72 |        100 |        623 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/service/StatsServiceTest.java                 | Java            |        170 |         31 |         52 |        253 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/service/TheaterServiceTest.java               | Java            |        453 |        100 |        114 |        667 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/service/TmdbServiceTest.java                  | Java            |        421 |         95 |        146 |        662 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/service/UserServiceTest.java                  | Java            |        313 |         61 |         82 |        456 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/service/ViewingRecordServiceTest.java         | Java            |        609 |        125 |        151 |        885 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/service/WishlistServiceTest.java              | Java            |        189 |         34 |         51 |        274 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/resources/application-test.yml                                   | YAML            |         38 |          3 |          8 |         49 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/docker-compose.yml                                                                | YAML            |         60 |          3 |          5 |         68 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/README.md                                                                | Markdown        |         38 |          0 |         33 |         71 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/package-lock.json                                                        | JSON            |     18,536 |          0 |          1 |     18,537 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/package.json                                                             | JSON            |         46 |          0 |          1 |         47 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/public/index.html                                                        | HTML            |         20 |         23 |          1 |         44 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/public/manifest.json                                                     | JSON            |         25 |          0 |          1 |         26 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/src/App.css                                                              | PostCSS         |         33 |          0 |          6 |         39 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/src/App.js                                                               | JavaScript      |        178 |          0 |          3 |        181 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/src/App.test.js                                                          | JavaScript      |         40 |          6 |          7 |         53 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/src/__mocks__/axios.js                                                   | JavaScript      |         11 |          0 |          0 |         11 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/src/__mocks__/react-router-dom.js                                        | JavaScript      |         35 |          0 |          2 |         37 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/src/components/TheaterSearch.js                                          | JavaScript      |        446 |          7 |         38 |        491 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/src/components/auth/ProtectedRoute.js                                    | JavaScript      |         21 |          0 |          4 |         25 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/src/components/auth/ProtectedRoute.test.js                               | JavaScript      |         83 |          6 |         23 |        112 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/src/components/layout/Navbar.js                                          | JavaScript      |        386 |          0 |         16 |        402 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/src/components/layout/Navbar.test.js                                     | JavaScript      |         59 |          4 |         12 |         75 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/src/context/AuthContext.js                                               | JavaScript      |         91 |          2 |         16 |        109 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/src/context/AuthContext.test.js                                          | JavaScript      |        113 |         11 |         29 |        153 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/src/index.css                                                            | PostCSS         |         12 |          0 |          2 |         14 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/src/index.js                                                             | JavaScript      |         12 |          3 |          3 |         18 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/src/index.test.js                                                        | JavaScript      |         29 |          8 |         11 |         48 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/src/logo.svg                                                             | XML             |          1 |          0 |          0 |          1 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/src/pages/ActivityFeed.js                                                | JavaScript      |        334 |          1 |         25 |        360 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/src/pages/Dashboard.js                                                   | JavaScript      |        334 |          2 |         22 |        358 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/src/pages/Dashboard.test.js                                              | JavaScript      |        303 |          9 |         71 |        383 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/src/pages/FollowManagement.js                                            | JavaScript      |        378 |          3 |         28 |        409 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/src/pages/Home.js                                                        | JavaScript      |        430 |          0 |         22 |        452 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/src/pages/Home.test.js                                                   | JavaScript      |        171 |          5 |         38 |        214 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/src/pages/Login.js                                                       | JavaScript      |        117 |          0 |         10 |        127 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/src/pages/Login.test.js                                                  | JavaScript      |        122 |          8 |         43 |        173 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/src/pages/Movies.js                                                      | JavaScript      |        790 |          4 |         54 |        848 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/src/pages/Movies.test.js                                                 | JavaScript      |        324 |         23 |        105 |        452 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/src/pages/ProfileEdit.js                                                 | JavaScript      |        398 |          3 |         38 |        439 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/src/pages/Register.js                                                    | JavaScript      |        162 |          0 |         13 |        175 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/src/pages/Register.test.js                                               | JavaScript      |        175 |         11 |         63 |        249 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/src/pages/Statistics.js                                                  | JavaScript      |        464 |          4 |         27 |        495 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/src/pages/Statistics.test.js                                             | JavaScript      |         72 |          6 |         16 |         94 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/src/pages/Theaters.js                                                    | JavaScript      |        403 |          4 |         41 |        448 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/src/pages/UserProfile.js                                                 | JavaScript      |        375 |          0 |         34 |        409 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/src/pages/UserSearch.js                                                  | JavaScript      |        258 |          1 |         22 |        281 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/src/pages/UserViewingRecords.js                                          | JavaScript      |        263 |          0 |         21 |        284 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/src/pages/ViewingRecords.js                                              | JavaScript      |        464 |          0 |         43 |        507 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/src/pages/ViewingRecords.test.js                                         | JavaScript      |        355 |         19 |        102 |        476 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/src/pages/Wishlist.js                                                    | JavaScript      |        687 |          1 |         42 |        730 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/src/reportWebVitals.js                                                   | JavaScript      |         12 |          0 |          2 |         14 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/src/reportWebVitals.test.js                                              | JavaScript      |         73 |          5 |         22 |        100 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/frontend/src/setupTests.js                                                        | JavaScript      |         24 |          8 |          4 |         36 |
+| /Users/tatsuyakondo/Documents/SALTO/cineTrack/start-dev.sh                                                                      | Shell Script    |         32 |         10 |         13 |         55 |
+| Total                                                                                                                           |                 |     39,508 |      1,436 |      4,056 |     45,000 |
++---------------------------------------------------------------------------------------------------------------------------------+-----------------+------------+------------+------------+------------+

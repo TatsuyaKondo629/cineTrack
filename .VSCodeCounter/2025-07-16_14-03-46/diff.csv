@@ -1,0 +1,8 @@
+"filename", "language", "Java", "comment", "blank", "total"
+"/Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/controller/AuthControllerIntegrationTest.java", "Java", 96, 10, 23, 129
+"/Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/controller/AuthControllerTest.java", "Java", 53, 12, 12, 77
+"/Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/controller/StatsControllerTest.java", "Java", 47, 8, 12, 67
+"/Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/controller/UserControllerTest.java", "Java", 250, 26, 48, 324
+"/Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/controller/ViewingRecordControllerTest.java", "Java", 177, 10, 35, 222
+"/Users/tatsuyakondo/Documents/SALTO/cineTrack/backend/src/test/java/com/cinetrack/controller/WishlistControllerTest.java", "Java", 131, 18, 29, 178
+"Total", "-", 754, 84, 159, 997
