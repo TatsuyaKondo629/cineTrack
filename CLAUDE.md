@@ -85,6 +85,49 @@ docker-compose up db
 2. **トレンド表示**: TMDb APIからトレンド映画取得
 3. **鑑賞記録**: 映画の評価・鑑賞日・劇場・フォーマット記録
 4. **CRUD操作**: 鑑賞記録の作成・編集・削除
+5. **ソーシャル機能**: ユーザーフォロー、アクティビティフィード
+6. **劇場検索**: 地域・チェーン別劇場検索機能
+7. **ウィッシュリスト**: 映画の後で見たいリスト管理
+8. **統計機能**: 視聴記録の詳細分析
+
+## Test Coverage Status
+
+### Frontend Test Coverage (最終更新: 2025-07-22)
+
+**全体カバレッジ:**
+- **Statements**: 92.18%
+- **Branches**: 86.19%
+- **Functions**: 84.53%
+- **Lines**: 93.4%
+
+**主要コンポーネントのカバレッジ:**
+- **src/components**: Functions 81.25% (特にTheaterSearch.js)
+  - ProtectedRoute.js: 100% ✓
+  - Navbar.js: 100% ✓
+  - TheaterSearch.js: 81.25% (未カバー行: 120,123,211-213,257,275,356,374)
+- **Movies.js**: Functions 76% (目標80%に対して72%→76%に改善)
+- **Dashboard.js**: 18/18テスト全て通過 ✓
+- **Statistics.js**: テスト安定化済み
+
+**テストファイル状況:**
+- 新規作成: 9個のテストファイル
+- 失敗テスト修正: Dashboard.test.js完了
+- 安定化: Statistics.test.js, TheaterSearch.test.js
+
+### テスト実行コマンド
+```bash
+# 全テスト実行
+npm test
+
+# カバレッジ付き実行
+npm test -- --coverage --watchAll=false
+
+# 特定ファイルのテスト
+npm test -- --testPathPattern=Movies.test.js --watchAll=false
+
+# 特定ディレクトリのカバレッジ
+npm test -- --coverage --testPathPattern="src/components" --watchAll=false
+```
 
 ## Environment Variables
 
@@ -98,3 +141,15 @@ docker-compose up db
 - **TMDb API**: https://api.themoviedb.org/3
 - **Backend API**: RESTful API設計
 - **Authentication**: JWT Bearer Token
+
+## Known Issues & Technical Debt
+
+### テスト関連
+1. **MUI Grid v2 migration warnings**: 古いprops (item, xs, sm) の使用
+2. **TheaterSearch.js未カバー行**: 複雑なMUI Selectイベントハンドラー
+3. **失敗テストファイル**: Theaters.test.js, ProfileEdit.test.js, UserSearch.test.js, Statistics.test.js
+
+### 開発優先度
+- **High**: Movies.js functions カバレッジ 76% → 80%
+- **Medium**: 失敗テストファイルの修正
+- **Low**: MUI Grid v2 migration
