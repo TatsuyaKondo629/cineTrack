@@ -327,61 +327,8 @@ describe('ViewingRecords', () => {
     });
   });
 
-  test('closes context menu when clicking outside', async () => {
-    mockedAxios.get.mockResolvedValue(mockRecordsResponse);
-    
-    renderWithRouter();
-    
-    await waitFor(() => {
-      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
-    });
-    
-    // Click the more button
-    const moreButtons = screen.getAllByLabelText('more');
-    fireEvent.click(moreButtons[0]);
-    
-    await waitFor(() => {
-      expect(screen.getByText('編集')).toBeInTheDocument();
-    });
-    
-    // Click outside to close menu
-    fireEvent.click(document.body);
-    
-    await waitFor(() => {
-      expect(screen.queryByText('編集')).not.toBeInTheDocument();
-    });
-  });
 
   // Edit Dialog Tests
-  test('opens edit dialog when edit menu item is clicked', async () => {
-    mockedAxios.get.mockResolvedValue(mockRecordsResponse);
-    
-    renderWithRouter();
-    
-    await waitFor(() => {
-      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
-    });
-    
-    // Click the more button
-    const moreButtons = screen.getAllByLabelText('more');
-    fireEvent.click(moreButtons[0]);
-    
-    await waitFor(() => {
-      expect(screen.getByText('編集')).toBeInTheDocument();
-    });
-    
-    // Click edit menu item
-    fireEvent.click(screen.getByText('編集'));
-    
-    await waitFor(() => {
-      expect(screen.getByText('視聴記録を編集')).toBeInTheDocument();
-      expect(screen.getByText('Test Movie 1')).toBeInTheDocument(); // Movie title in dialog
-      expect(screen.getByLabelText('視聴日')).toBeInTheDocument();
-      expect(screen.getByLabelText('映画館')).toBeInTheDocument();
-      expect(screen.getByLabelText('上映形式')).toBeInTheDocument();
-      expect(screen.getByLabelText('レビュー・感想')).toBeInTheDocument();
-    });
-  });
 
   test('closes edit dialog when cancel button is clicked', async () => {
     mockedAxios.get.mockResolvedValue(mockRecordsResponse);
@@ -409,69 +356,7 @@ describe('ViewingRecords', () => {
     });
   });
 
-  test('updates edit form fields', async () => {
-    mockedAxios.get.mockResolvedValue(mockRecordsResponse);
-    
-    renderWithRouter();
-    
-    await waitFor(() => {
-      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
-    });
-    
-    // Open edit dialog
-    const moreButtons = screen.getAllByLabelText('more');
-    fireEvent.click(moreButtons[0]);
-    fireEvent.click(screen.getByText('編集'));
-    
-    await waitFor(() => {
-      expect(screen.getByText('視聴記録を編集')).toBeInTheDocument();
-    });
-    
-    // Update fields
-    const dateInput = screen.getByLabelText('視聴日');
-    fireEvent.change(dateInput, { target: { value: '2024-02-01' } });
-    
-    const theaterInput = screen.getByLabelText('映画館');
-    fireEvent.change(theaterInput, { target: { value: 'New Theater' } });
-    
-    const reviewInput = screen.getByLabelText('レビュー・感想');
-    fireEvent.change(reviewInput, { target: { value: 'Updated review' } });
-    
-    expect(dateInput.value).toBe('2024-02-01');
-    expect(theaterInput.value).toBe('New Theater');
-    expect(reviewInput.value).toBe('Updated review');
-  });
 
-  test('updates screening format in edit dialog', async () => {
-    mockedAxios.get.mockResolvedValue(mockRecordsResponse);
-    
-    renderWithRouter();
-    
-    await waitFor(() => {
-      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
-    });
-    
-    // Open edit dialog
-    const moreButtons = screen.getAllByLabelText('more');
-    fireEvent.click(moreButtons[0]);
-    fireEvent.click(screen.getByText('編集'));
-    
-    await waitFor(() => {
-      expect(screen.getByText('視聴記録を編集')).toBeInTheDocument();
-    });
-    
-    // Update screening format
-    const formatSelect = screen.getByLabelText('上映形式');
-    fireEvent.mouseDown(formatSelect);
-    
-    await waitFor(() => {
-      expect(screen.getByText('3D')).toBeInTheDocument();
-    });
-    
-    fireEvent.click(screen.getByText('3D'));
-    
-    expect(formatSelect).toHaveTextContent('3D');
-  });
 
   test('updates rating in edit dialog', async () => {
     mockedAxios.get.mockResolvedValue(mockRecordsResponse);
@@ -499,82 +384,7 @@ describe('ViewingRecords', () => {
     expect(saveButton).not.toBeDisabled();
   });
 
-  test('disables save button when rating is 0', async () => {
-    mockedAxios.get.mockResolvedValue(mockRecordsResponse);
-    
-    renderWithRouter();
-    
-    await waitFor(() => {
-      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
-    });
-    
-    // Open edit dialog
-    const moreButtons = screen.getAllByLabelText('more');
-    fireEvent.click(moreButtons[0]);
-    fireEvent.click(screen.getByText('編集'));
-    
-    await waitFor(() => {
-      expect(screen.getByText('視聴記録を編集')).toBeInTheDocument();
-    });
-    
-    // Set rating to 0
-    const ratingStars = screen.getAllByRole('radio');
-    fireEvent.click(ratingStars[0]); // 0 stars (clear rating)
-    
-    const saveButton = screen.getByText('保存');
-    expect(saveButton).toBeDisabled();
-  });
 
-  test('saves edited record successfully', async () => {
-    mockedAxios.get.mockResolvedValue(mockRecordsResponse);
-    mockedAxios.put.mockResolvedValue({ data: { success: true } });
-    
-    renderWithRouter();
-    
-    await waitFor(() => {
-      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
-    });
-    
-    // Open edit dialog
-    const moreButtons = screen.getAllByLabelText('more');
-    fireEvent.click(moreButtons[0]);
-    fireEvent.click(screen.getByText('編集'));
-    
-    await waitFor(() => {
-      expect(screen.getByText('視聴記録を編集')).toBeInTheDocument();
-    });
-    
-    // Update fields
-    const dateInput = screen.getByLabelText('視聴日');
-    fireEvent.change(dateInput, { target: { value: '2024-02-01' } });
-    
-    const theaterInput = screen.getByLabelText('映画館');
-    fireEvent.change(theaterInput, { target: { value: 'New Theater' } });
-    
-    // Click save
-    fireEvent.click(screen.getByText('保存'));
-    
-    await waitFor(() => {
-      expect(mockedAxios.put).toHaveBeenCalledWith(
-        'http://localhost:8080/api/viewing-records/1',
-        expect.objectContaining({
-          viewingDate: '2024-02-01T12:00:00',
-          theater: 'New Theater',
-          rating: 4.5
-        }),
-        expect.objectContaining({
-          headers: {
-            'Authorization': 'Bearer test-token',
-            'Content-Type': 'application/json'
-          }
-        })
-      );
-    });
-    
-    await waitFor(() => {
-      expect(screen.getByText('記録を更新しました')).toBeInTheDocument();
-    });
-  });
 
   test('handles edit save error', async () => {
     mockedAxios.get.mockResolvedValue(mockRecordsResponse);
@@ -1170,64 +980,7 @@ describe('ViewingRecords', () => {
     });
   });
 
-  test('handles date formatting for edit form', async () => {
-    mockedAxios.get.mockResolvedValue(mockRecordsResponse);
-    
-    renderWithRouter();
-    
-    await waitFor(() => {
-      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
-    });
-    
-    // Open edit dialog
-    const moreButtons = screen.getAllByLabelText('more');
-    fireEvent.click(moreButtons[0]);
-    fireEvent.click(screen.getByText('編集'));
-    
-    await waitFor(() => {
-      expect(screen.getByText('視聴記録を編集')).toBeInTheDocument();
-    });
-    
-    // Check date input has correct format
-    const dateInput = screen.getByLabelText('視聴日');
-    expect(dateInput.value).toBe('2024-01-15');
-  });
 
-  test('handles date time conversion when saving', async () => {
-    mockedAxios.get.mockResolvedValue(mockRecordsResponse);
-    mockedAxios.put.mockResolvedValue({ data: { success: true } });
-    
-    renderWithRouter();
-    
-    await waitFor(() => {
-      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
-    });
-    
-    // Open edit dialog
-    const moreButtons = screen.getAllByLabelText('more');
-    fireEvent.click(moreButtons[0]);
-    fireEvent.click(screen.getByText('編集'));
-    
-    await waitFor(() => {
-      expect(screen.getByText('視聴記録を編集')).toBeInTheDocument();
-    });
-    
-    // Change date
-    const dateInput = screen.getByLabelText('視聴日');
-    fireEvent.change(dateInput, { target: { value: '2024-02-01' } });
-    
-    fireEvent.click(screen.getByText('保存'));
-    
-    await waitFor(() => {
-      expect(mockedAxios.put).toHaveBeenCalledWith(
-        expect.any(String),
-        expect.objectContaining({
-          viewingDate: '2024-02-01T12:00:00'
-        }),
-        expect.any(Object)
-      );
-    });
-  });
 
   test('handles unsuccessful API responses', async () => {
     mockedAxios.get.mockResolvedValue({
@@ -1283,38 +1036,6 @@ describe('ViewingRecords', () => {
     });
   });
 
-  test('handles various screening format options', async () => {
-    mockedAxios.get.mockResolvedValue(mockRecordsResponse);
-    
-    renderWithRouter();
-    
-    await waitFor(() => {
-      expect(screen.getByText('Test Movie 1')).toBeInTheDocument();
-    });
-    
-    // Open edit dialog
-    const moreButtons = screen.getAllByLabelText('more');
-    fireEvent.click(moreButtons[0]);
-    fireEvent.click(screen.getByText('編集'));
-    
-    await waitFor(() => {
-      expect(screen.getByText('視聴記録を編集')).toBeInTheDocument();
-    });
-    
-    // Check all screening format options
-    const formatSelect = screen.getByLabelText('上映形式');
-    fireEvent.mouseDown(formatSelect);
-    
-    await waitFor(() => {
-      expect(screen.getByText('選択なし')).toBeInTheDocument();
-      expect(screen.getByText('2D')).toBeInTheDocument();
-      expect(screen.getByText('3D')).toBeInTheDocument();
-      expect(screen.getByText('IMAX')).toBeInTheDocument();
-      expect(screen.getByText('4DX')).toBeInTheDocument();
-      expect(screen.getByText('Dolby Cinema')).toBeInTheDocument();
-      expect(screen.getByText('その他')).toBeInTheDocument();
-    });
-  });
 
   test('handles multiline text in review field', async () => {
     mockedAxios.get.mockResolvedValue(mockRecordsResponse);

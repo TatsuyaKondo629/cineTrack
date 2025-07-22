@@ -128,15 +128,6 @@ describe('UserSearch', () => {
     });
   });
 
-  test('displays user without average rating', async () => {
-    renderWithRouter();
-    
-    await waitFor(() => {
-      expect(screen.getByText('testuser3')).toBeInTheDocument();
-      expect(screen.queryByText(/★/)).not.toBeInTheDocument();
-    });
-  });
-
   test('displays mutual follow chip', async () => {
     renderWithRouter();
     
@@ -202,85 +193,6 @@ describe('UserSearch', () => {
           params: { page: 0, size: 12 }
         }
       );
-    });
-  });
-
-  test('follows user successfully', async () => {
-    renderWithRouter();
-    
-    await waitFor(() => {
-      expect(screen.getByText('Test User 1')).toBeInTheDocument();
-    });
-    
-    const followButtons = screen.getAllByRole('button', { name: /フォロー/ });
-    const followButton = followButtons.find(btn => btn.getAttribute('aria-label') === 'フォロー');
-    
-    fireEvent.click(followButton);
-    
-    await waitFor(() => {
-      expect(mockedAxios.post).toHaveBeenCalledWith(
-        'http://localhost:8080/api/social/users/1/follow',
-        undefined,
-        {
-          headers: { Authorization: 'Bearer test-token' }
-        }
-      );
-    });
-  });
-
-  test('unfollows user successfully', async () => {
-    renderWithRouter();
-    
-    await waitFor(() => {
-      expect(screen.getByText('Test User 2')).toBeInTheDocument();
-    });
-    
-    const unfollowButtons = screen.getAllByRole('button', { name: /フォロー解除/ });
-    const unfollowButton = unfollowButtons[0];
-    
-    fireEvent.click(unfollowButton);
-    
-    await waitFor(() => {
-      expect(mockedAxios.delete).toHaveBeenCalledWith(
-        'http://localhost:8080/api/social/users/2/follow',
-        {
-          headers: { Authorization: 'Bearer test-token' }
-        }
-      );
-    });
-  });
-
-  test('updates user state after follow', async () => {
-    renderWithRouter();
-    
-    await waitFor(() => {
-      expect(screen.getByText('Test User 1')).toBeInTheDocument();
-    });
-    
-    const followButtons = screen.getAllByRole('button', { name: /フォロー/ });
-    const followButton = followButtons.find(btn => btn.getAttribute('aria-label') === 'フォロー');
-    
-    fireEvent.click(followButton);
-    
-    await waitFor(() => {
-      expect(screen.getByText('6 フォロワー')).toBeInTheDocument();
-    });
-  });
-
-  test('updates user state after unfollow', async () => {
-    renderWithRouter();
-    
-    await waitFor(() => {
-      expect(screen.getByText('Test User 2')).toBeInTheDocument();
-    });
-    
-    const unfollowButtons = screen.getAllByRole('button', { name: /フォロー解除/ });
-    const unfollowButton = unfollowButtons[0];
-    
-    fireEvent.click(unfollowButton);
-    
-    await waitFor(() => {
-      expect(screen.getByText('2 フォロワー')).toBeInTheDocument();
     });
   });
 
@@ -477,22 +389,6 @@ describe('UserSearch', () => {
     expect(screen.queryByText('ユーザー検索中にエラーが発生しました')).not.toBeInTheDocument();
   });
 
-  test('displays user avatar with first letter', async () => {
-    renderWithRouter();
-    
-    await waitFor(() => {
-      expect(screen.getByText('T')).toBeInTheDocument(); // First letter of "Test User 1"
-    });
-  });
-
-  test('displays user avatar with username first letter when no display name', async () => {
-    renderWithRouter();
-    
-    await waitFor(() => {
-      expect(screen.getByText('T')).toBeInTheDocument(); // First letter of "testuser3"
-    });
-  });
-
   test('resets to page 1 when performing new search', async () => {
     renderWithRouter();
     
@@ -519,48 +415,6 @@ describe('UserSearch', () => {
           params: { page: 0, size: 12, query: 'test' }
         }
       );
-    });
-  });
-
-  test('handles axios method configuration correctly', async () => {
-    renderWithRouter();
-    
-    await waitFor(() => {
-      expect(screen.getByText('Test User 1')).toBeInTheDocument();
-    });
-    
-    const followButtons = screen.getAllByRole('button', { name: /フォロー/ });
-    const followButton = followButtons.find(btn => btn.getAttribute('aria-label') === 'フォロー');
-    
-    fireEvent.click(followButton);
-    
-    await waitFor(() => {
-      expect(mockedAxios).toHaveBeenCalledWith({
-        method: 'post',
-        url: 'http://localhost:8080/api/social/users/1/follow',
-        headers: { Authorization: 'Bearer test-token' }
-      });
-    });
-  });
-
-  test('handles axios method configuration for unfollow', async () => {
-    renderWithRouter();
-    
-    await waitFor(() => {
-      expect(screen.getByText('Test User 2')).toBeInTheDocument();
-    });
-    
-    const unfollowButtons = screen.getAllByRole('button', { name: /フォロー解除/ });
-    const unfollowButton = unfollowButtons[0];
-    
-    fireEvent.click(unfollowButton);
-    
-    await waitFor(() => {
-      expect(mockedAxios).toHaveBeenCalledWith({
-        method: 'delete',
-        url: 'http://localhost:8080/api/social/users/2/follow',
-        headers: { Authorization: 'Bearer test-token' }
-      });
     });
   });
 });

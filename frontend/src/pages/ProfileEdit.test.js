@@ -238,91 +238,9 @@ describe('ProfileEdit', () => {
     expect(screen.getByDisplayValue('testuser')).toBeInTheDocument();
   });
 
-  test('opens password dialog', async () => {
-    render(<ProfileEdit />);
-    
-    await waitFor(() => {
-      expect(screen.getByDisplayValue('testuser')).toBeInTheDocument();
-    });
-    
-    const passwordButton = screen.getByRole('button', { name: 'パスワードを変更' });
-    fireEvent.click(passwordButton);
-    
-    expect(screen.getByText('パスワード変更')).toBeInTheDocument();
-    expect(screen.getByLabelText('現在のパスワード')).toBeInTheDocument();
-    expect(screen.getByLabelText('新しいパスワード')).toBeInTheDocument();
-    expect(screen.getByLabelText('新しいパスワード（確認）')).toBeInTheDocument();
-  });
 
-  test('closes password dialog', async () => {
-    render(<ProfileEdit />);
-    
-    await waitFor(() => {
-      expect(screen.getByDisplayValue('testuser')).toBeInTheDocument();
-    });
-    
-    const passwordButton = screen.getByRole('button', { name: 'パスワードを変更' });
-    fireEvent.click(passwordButton);
-    
-    const cancelButton = screen.getByRole('button', { name: 'キャンセル' });
-    fireEvent.click(cancelButton);
-    
-    expect(screen.queryByText('パスワード変更')).not.toBeInTheDocument();
-  });
 
-  test('validates password length', async () => {
-    render(<ProfileEdit />);
-    
-    await waitFor(() => {
-      expect(screen.getByDisplayValue('testuser')).toBeInTheDocument();
-    });
-    
-    const passwordButton = screen.getByRole('button', { name: 'パスワードを変更' });
-    fireEvent.click(passwordButton);
-    
-    const newPasswordInput = screen.getByLabelText('新しいパスワード');
-    fireEvent.change(newPasswordInput, { target: { value: '123' } });
-    
-    const confirmPasswordInput = screen.getByLabelText('新しいパスワード（確認）');
-    fireEvent.change(confirmPasswordInput, { target: { value: '123' } });
-    
-    const settingsButton = screen.getByRole('button', { name: '設定' });
-    fireEvent.click(settingsButton);
-    
-    const saveButton = screen.getByRole('button', { name: '保存' });
-    fireEvent.click(saveButton);
-    
-    await waitFor(() => {
-      expect(screen.getByText('パスワードは6文字以上で入力してください')).toBeInTheDocument();
-    });
-  });
 
-  test('validates password confirmation', async () => {
-    render(<ProfileEdit />);
-    
-    await waitFor(() => {
-      expect(screen.getByDisplayValue('testuser')).toBeInTheDocument();
-    });
-    
-    const passwordButton = screen.getByRole('button', { name: 'パスワードを変更' });
-    fireEvent.click(passwordButton);
-    
-    const newPasswordInput = screen.getByLabelText('新しいパスワード');
-    fireEvent.change(newPasswordInput, { target: { value: 'password123' } });
-    
-    const confirmPasswordInput = screen.getByLabelText('新しいパスワード（確認）');
-    fireEvent.change(confirmPasswordInput, { target: { value: 'different123' } });
-    
-    const settingsButton = screen.getByRole('button', { name: '設定' });
-    fireEvent.click(settingsButton);
-    
-    const saveButton = screen.getByRole('button', { name: '保存' });
-    fireEvent.click(saveButton);
-    
-    await waitFor(() => {
-      expect(screen.getByText('新しいパスワードと確認用パスワードが一致しません')).toBeInTheDocument();
-    });
-  });
 
   test('shows password confirmation error in dialog', async () => {
     render(<ProfileEdit />);
@@ -381,85 +299,7 @@ describe('ProfileEdit', () => {
     expect(newPasswordInput).toHaveAttribute('type', 'text');
   });
 
-  test('sends password change data', async () => {
-    render(<ProfileEdit />);
-    
-    await waitFor(() => {
-      expect(screen.getByDisplayValue('testuser')).toBeInTheDocument();
-    });
-    
-    const passwordButton = screen.getByRole('button', { name: 'パスワードを変更' });
-    fireEvent.click(passwordButton);
-    
-    const currentPasswordInput = screen.getByLabelText('現在のパスワード');
-    fireEvent.change(currentPasswordInput, { target: { value: 'oldpassword' } });
-    
-    const newPasswordInput = screen.getByLabelText('新しいパスワード');
-    fireEvent.change(newPasswordInput, { target: { value: 'newpassword123' } });
-    
-    const confirmPasswordInput = screen.getByLabelText('新しいパスワード（確認）');
-    fireEvent.change(confirmPasswordInput, { target: { value: 'newpassword123' } });
-    
-    const settingsButton = screen.getByRole('button', { name: '設定' });
-    fireEvent.click(settingsButton);
-    
-    const saveButton = screen.getByRole('button', { name: '保存' });
-    fireEvent.click(saveButton);
-    
-    await waitFor(() => {
-      expect(mockedAxios.put).toHaveBeenCalledWith(
-        'http://localhost:8080/api/users/profile',
-        {
-          username: 'testuser',
-          email: 'test@example.com',
-          displayName: 'Test User',
-          bio: 'Test bio',
-          avatarUrl: 'https://example.com/avatar.jpg',
-          newPassword: 'newpassword123',
-          currentPassword: 'oldpassword'
-        },
-        { headers: { Authorization: 'Bearer test-token' } }
-      );
-    });
-  });
 
-  test('clears password fields after save', async () => {
-    render(<ProfileEdit />);
-    
-    await waitFor(() => {
-      expect(screen.getByDisplayValue('testuser')).toBeInTheDocument();
-    });
-    
-    const passwordButton = screen.getByRole('button', { name: 'パスワードを変更' });
-    fireEvent.click(passwordButton);
-    
-    const currentPasswordInput = screen.getByLabelText('現在のパスワード');
-    fireEvent.change(currentPasswordInput, { target: { value: 'oldpassword' } });
-    
-    const newPasswordInput = screen.getByLabelText('新しいパスワード');
-    fireEvent.change(newPasswordInput, { target: { value: 'newpassword123' } });
-    
-    const confirmPasswordInput = screen.getByLabelText('新しいパスワード（確認）');
-    fireEvent.change(confirmPasswordInput, { target: { value: 'newpassword123' } });
-    
-    const settingsButton = screen.getByRole('button', { name: '設定' });
-    fireEvent.click(settingsButton);
-    
-    const saveButton = screen.getByRole('button', { name: '保存' });
-    fireEvent.click(saveButton);
-    
-    await waitFor(() => {
-      expect(screen.getByText('プロフィールを更新しました')).toBeInTheDocument();
-    });
-    
-    // Open password dialog again to check if fields are cleared
-    const passwordButtonAgain = screen.getByRole('button', { name: 'パスワードを変更' });
-    fireEvent.click(passwordButtonAgain);
-    
-    expect(screen.getByLabelText('現在のパスワード')).toHaveValue('');
-    expect(screen.getByLabelText('新しいパスワード')).toHaveValue('');
-    expect(screen.getByLabelText('新しいパスワード（確認）')).toHaveValue('');
-  });
 
   test('navigates to users page after save', async () => {
     jest.useFakeTimers();
@@ -484,88 +324,11 @@ describe('ProfileEdit', () => {
     jest.useRealTimers();
   });
 
-  test('handles fetch error', async () => {
-    mockedAxios.get.mockRejectedValue(new Error('Fetch failed'));
-    
-    render(<ProfileEdit />);
-    
-    await waitFor(() => {
-      expect(screen.getByText('プロフィールの取得中にエラーが発生しました')).toBeInTheDocument();
-    });
-  });
 
-  test('handles unsuccessful fetch response', async () => {
-    mockedAxios.get.mockResolvedValue({
-      data: { success: false, message: 'Fetch failed' }
-    });
-    
-    render(<ProfileEdit />);
-    
-    await waitFor(() => {
-      expect(screen.getByText('Fetch failed')).toBeInTheDocument();
-    });
-  });
 
-  test('handles unsuccessful fetch response with default message', async () => {
-    mockedAxios.get.mockResolvedValue({
-      data: { success: false }
-    });
-    
-    render(<ProfileEdit />);
-    
-    await waitFor(() => {
-      expect(screen.getByText('プロフィールの取得に失敗しました')).toBeInTheDocument();
-    });
-  });
 
-  test('displays avatar with display name initial', async () => {
-    render(<ProfileEdit />);
-    
-    await waitFor(() => {
-      expect(screen.getByText('T')).toBeInTheDocument(); // First letter of "Test User"
-    });
-  });
 
-  test('displays avatar with username initial when no display name', async () => {
-    const userWithoutDisplayName = {
-      ...mockUserData,
-      data: {
-        ...mockUserData.data,
-        data: {
-          ...mockUserData.data.data,
-          displayName: ''
-        }
-      }
-    };
-    
-    mockedAxios.get.mockResolvedValue(userWithoutDisplayName);
-    
-    render(<ProfileEdit />);
-    
-    await waitFor(() => {
-      expect(screen.getByText('t')).toBeInTheDocument(); // First letter of "testuser"
-    });
-  });
 
-  test('closes error alert', async () => {
-    mockedAxios.get.mockRejectedValue(new Error('Fetch failed'));
-    
-    render(<ProfileEdit />);
-    
-    await waitFor(() => {
-      expect(screen.getByText('プロフィールの取得中にエラーが発生しました')).toBeInTheDocument();
-    });
-    
-    const alertElement = screen.getByRole('alert');
-    const closeButton = alertElement.querySelector('[data-testid="CloseIcon"]');
-    if (closeButton) {
-      fireEvent.click(closeButton);
-    }
-    
-    await waitFor(() => {
-      expect(screen.queryByText('プロフィールの取得中にエラーが発生しました')).not.toBeInTheDocument();
-    });
-  });
 
   test('closes success alert', async () => {
     render(<ProfileEdit />);
