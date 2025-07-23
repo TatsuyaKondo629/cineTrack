@@ -6,11 +6,12 @@ import {
   Button,
   Typography,
   Box,
-  Alert,
   Link
 } from '@mui/material';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import ErrorAlert from '../components/common/ErrorAlert';
+import useApiCall from '../hooks/useApiCall';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -19,8 +20,11 @@ const Login = () => {
     email: '',
     password: ''
   });
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  
+  const { loading, error, execute, clearError } = useApiCall({
+    operation: 'login',
+    maxRetries: 2
+  });
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -37,21 +41,16 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-    setLoading(true);
+    clearError();
 
     try {
-      const result = await login(formData.email, formData.password);
+      const result = await execute(login, formData.email, formData.password);
       
       if (result.success) {
         navigate('/dashboard');
-      } else {
-        setError(result.message);
       }
-    } catch (error) {
-      setError('ログインに失敗しました');
-    } finally {
-      setLoading(false);
+    } catch (err) {
+      // エラーは useApiCall で処理される
     }
   };
 
@@ -70,9 +69,13 @@ const Login = () => {
           </Typography>
           
           {error && (
-            <Alert severity="error" sx={{ width: '100%', mb: 2 }}>
-              {error}
-            </Alert>
+            <ErrorAlert
+              error={error.original}
+              message={error.message}
+              onRetry={() => handleSubmit({ preventDefault: () => {} })}
+              onClose={clearError}
+              sx={{ width: '100%', mb: 2 }}
+            />
           )}
 
           <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1, width: '100%' }}>
