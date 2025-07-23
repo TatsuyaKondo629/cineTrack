@@ -120,12 +120,14 @@ describe('UserProfile', () => {
     });
   });
 
-  test('shows loading spinner initially', () => {
+  test('shows loading skeleton initially', () => {
     mockedAxios.get.mockImplementation(() => new Promise(() => {}));
     
-    renderWithRouter();
+    const { container } = renderWithRouter();
     
-    expect(screen.getByText('読み込み中...')).toBeInTheDocument();
+    // Check for skeleton loader elements instead of loading text
+    const skeletons = container.querySelectorAll('.MuiSkeleton-root');
+    expect(skeletons.length).toBeGreaterThan(0);
   });
 
   test('displays user statistics', async () => {

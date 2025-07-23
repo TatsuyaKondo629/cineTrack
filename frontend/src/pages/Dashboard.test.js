@@ -88,13 +88,15 @@ describe('Dashboard', () => {
     mockLocalStorage.getItem.mockReturnValue('test-token');
   });
 
-  test('displays loading spinner initially', () => {
+  test('displays loading skeleton initially', () => {
     // Mock axios to delay response
     mockedAxios.get.mockImplementation(() => new Promise(() => {}));
     
-    renderWithRouter();
+    const { container } = renderWithRouter();
     
-    expect(screen.getByRole('progressbar')).toBeInTheDocument();
+    // Check for skeleton loader elements instead of progressbar
+    const skeletons = container.querySelectorAll('.MuiSkeleton-root');
+    expect(skeletons.length).toBeGreaterThan(0);
   });
 
   test('displays user welcome message after loading', async () => {

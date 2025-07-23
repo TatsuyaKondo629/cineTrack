@@ -71,14 +71,16 @@ describe('ActivityFeed', () => {
     mockLocalStorage.getItem.mockReturnValue('fake-token');
   });
 
-  test('renders loading state initially', () => {
+  test('renders loading skeleton initially', () => {
     // Mock axios to return a pending promise
     mockedAxios.get.mockReturnValue(new Promise(() => {}));
     
-    renderWithRouter();
+    const { container } = renderWithRouter();
     
-    expect(screen.getByRole('progressbar')).toBeInTheDocument();
-    expect(screen.getByText('アクティビティを読み込み中...')).toBeInTheDocument();
+    // Check for page heading and skeleton loader elements
+    expect(screen.getByText('アクティビティフィード')).toBeInTheDocument();
+    const skeletons = container.querySelectorAll('.MuiSkeleton-root');
+    expect(skeletons.length).toBeGreaterThan(0);
   });
 
   test('displays error message when API call fails', async () => {

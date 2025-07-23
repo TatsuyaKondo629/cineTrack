@@ -34,6 +34,7 @@ import {
   MoreVert as MoreVertIcon
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import { ActivityListSkeleton } from '../components/common/SkeletonLoader';
 import axios from 'axios';
 
 const ActivityFeed = () => {
@@ -136,11 +137,12 @@ const ActivityFeed = () => {
 
   if (loading) {
     return (
-      <Container maxWidth="md" sx={{ py: 4, textAlign: 'center' }}>
-        <CircularProgress />
-        <Typography variant="h6" sx={{ mt: 2 }}>
-          アクティビティを読み込み中...
+      <Container maxWidth="md" sx={{ py: 4 }}>
+        <Typography variant="h4" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <TimelineIcon />
+          アクティビティフィード
         </Typography>
+        <ActivityListSkeleton count={6} />
       </Container>
     );
   }

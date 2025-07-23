@@ -33,6 +33,7 @@ import {
   Visibility as VisibilityIcon
 } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
+import { UserProfileSkeleton } from '../components/common/SkeletonLoader';
 import axios from 'axios';
 
 const UserProfile = () => {
@@ -197,13 +198,7 @@ const UserProfile = () => {
   }, [userId]);
 
   if (loading) {
-    return (
-      <Container maxWidth="lg" sx={{ py: 4 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-          <Typography>読み込み中...</Typography>
-        </Box>
-      </Container>
-    );
+    return <UserProfileSkeleton />;
   }
 
   if (error) {
@@ -226,7 +221,7 @@ const UserProfile = () => {
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Grid container spacing={3}>
         {/* プロフィール情報 */}
-        <Grid item xs={12} md={4}>
+        <Grid size={{ xs: 12, md: 4 }}>
           <Card>
             <CardContent>
               <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3 }}>
@@ -291,7 +286,7 @@ const UserProfile = () => {
                   統計情報
                 </Typography>
                 <Grid container spacing={2}>
-                  <Grid item xs={6}>
+                  <Grid size={{ xs: 6 }}>
                     <Paper sx={{ p: 2, textAlign: 'center' }}>
                       <GroupsIcon color="primary" sx={{ mb: 1 }} />
                       <Typography variant="h6">{user.followerCount || 0}</Typography>
@@ -300,7 +295,7 @@ const UserProfile = () => {
                       </Typography>
                     </Paper>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid size={{ xs: 6 }}>
                     <Paper sx={{ p: 2, textAlign: 'center' }}>
                       <Typography variant="h6">{user.followingCount || 0}</Typography>
                       <Typography variant="body2" color="text.secondary">
@@ -308,7 +303,7 @@ const UserProfile = () => {
                       </Typography>
                     </Paper>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid size={{ xs: 6 }}>
                     <Paper sx={{ p: 2, textAlign: 'center' }}>
                       <MovieIcon color="primary" sx={{ mb: 1 }} />
                       <Typography variant="h6">{user.totalMovieCount || 0}</Typography>
@@ -317,7 +312,7 @@ const UserProfile = () => {
                       </Typography>
                     </Paper>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid size={{ xs: 6 }}>
                     <Paper sx={{ p: 2, textAlign: 'center' }}>
                       <StarIcon color="primary" sx={{ mb: 1 }} />
                       <Typography variant="h6">
@@ -354,7 +349,7 @@ const UserProfile = () => {
         </Grid>
 
         {/* タブコンテンツ */}
-        <Grid item xs={12} md={8}>
+        <Grid size={{ xs: 12, md: 8 }}>
           <Card>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
               <Tabs value={activeTab} onChange={handleTabChange}>

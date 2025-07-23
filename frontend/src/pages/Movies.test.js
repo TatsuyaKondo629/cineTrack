@@ -138,12 +138,14 @@ describe('Movies', () => {
     expect(screen.getByRole('tab', { name: '上映中' })).toBeInTheDocument();
   });
 
-  test('displays loading spinner initially', () => {
+  test('displays loading skeleton initially', () => {
     mockedAxios.get.mockImplementation(() => new Promise(() => {}));
     
-    renderWithRouter();
+    const { container } = renderWithRouter();
     
-    expect(screen.getByRole('progressbar')).toBeInTheDocument();
+    // Check for skeleton loader elements instead of progressbar
+    const skeletons = container.querySelectorAll('.MuiSkeleton-root');
+    expect(skeletons.length).toBeGreaterThan(0);
   });
 
   test('fetches and displays trending movies on initial load', async () => {

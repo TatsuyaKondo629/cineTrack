@@ -24,6 +24,7 @@ import {
 } from '@mui/material';
 import { Search as SearchIcon, Add as AddIcon, Favorite as FavoriteIcon, FavoriteBorder as FavoriteBorderIcon } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
+import { MovieCardSkeleton } from '../components/common/SkeletonLoader';
 import TheaterSearch from '../components/TheaterSearch';
 import axios from 'axios';
 
@@ -388,8 +389,18 @@ const Movies = () => {
 
       {/* Movies Grid */}
       {loading ? (
-        <Box display="flex" justifyContent="center" py={4}>
-          <CircularProgress />
+        <Box sx={{
+          display: 'grid',
+          gridTemplateColumns: {
+            xs: 'repeat(2, minmax(140px, 1fr))',
+            sm: 'repeat(3, minmax(160px, 1fr))',
+            md: 'repeat(4, minmax(180px, 1fr))',
+            lg: 'repeat(5, minmax(200px, 1fr))'
+          },
+          gap: { xs: 1, sm: 2 },
+          mt: 2
+        }}>
+          <MovieCardSkeleton count={10} />
         </Box>
       ) : (
         <Box sx={{

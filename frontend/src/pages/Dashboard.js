@@ -17,6 +17,7 @@ import {
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { PageSkeleton } from '../components/common/SkeletonLoader';
 import axios from 'axios';
 
 const Dashboard = () => {
@@ -77,9 +78,12 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <Container maxWidth="lg" sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
-        <CircularProgress />
-      </Container>
+      <PageSkeleton 
+        showHeader={true}
+        showStats={true}
+        showContent={true}
+        contentType="cards"
+      />
     );
   }
 

@@ -235,7 +235,7 @@ const TheaterSearch = ({
         {/* 検索フィルター */}
         <Box sx={{ mt: 2 }}>
           <Grid container spacing={1.5} alignItems="center">
-            <Grid item xs={12} sm={4}>
+            <Grid size={{ xs: 12, sm: 4 }}>
               <TextField
                 fullWidth
                 variant="outlined"
@@ -249,7 +249,7 @@ const TheaterSearch = ({
               />
             </Grid>
             
-            <Grid item xs={12} sm={4}>
+            <Grid size={{ xs: 12, sm: 4 }}>
               <FormControl fullWidth size="small" sx={{ minWidth: 120 }}>
                 <InputLabel>都道府県</InputLabel>
                 <Select
@@ -267,7 +267,7 @@ const TheaterSearch = ({
               </FormControl>
             </Grid>
             
-            <Grid item xs={12} sm={4}>
+            <Grid size={{ xs: 12, sm: 4 }}>
               <FormControl fullWidth size="small" sx={{ minWidth: 140 }}>
                 <InputLabel>チェーン</InputLabel>
                 <Select
@@ -335,7 +335,7 @@ const TheaterSearch = ({
     <Box>
       {/* 検索フィルター */}
       <Grid container spacing={2} sx={{ mb: 3 }}>
-        <Grid item xs={12}>
+        <Grid size={{ xs: 12 }}>
           <TextField
             fullWidth
             variant="outlined"
@@ -348,7 +348,7 @@ const TheaterSearch = ({
           />
         </Grid>
         
-        <Grid item xs={6}>
+        <Grid size={{ xs: 6 }}>
           <FormControl fullWidth>
             <InputLabel>都道府県</InputLabel>
             <Select
@@ -366,7 +366,7 @@ const TheaterSearch = ({
           </FormControl>
         </Grid>
         
-        <Grid item xs={6}>
+        <Grid size={{ xs: 6 }}>
           <FormControl fullWidth>
             <InputLabel>チェーン</InputLabel>
             <Select
