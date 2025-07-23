@@ -16,64 +16,55 @@
 - **API**: TMDb API（映画データ）
 - **Containerization**: Docker, Docker Compose
 
-## 開発環境セットアップ
+## 🚀 クイックスタート
+
+### 新しい開発者向け（推奨）
+```bash
+# 1. リポジトリをクローン
+git clone https://github.com/YourUsername/cineTrack.git
+cd cineTrack
+
+# 2. 自動セットアップを実行
+./setup.sh
+```
+**これだけで完了！** 🎉 自動的にすべてが設定されます。
+
+### 必要な外部サービス
+- **TMDb API** (必須): [こちら](https://www.themoviedb.org/settings/api)でAPIキーを取得
+
+---
+
+## 📋 開発環境セットアップ（詳細）
 
 ### 前提条件
 - Docker & Docker Compose
-- Node.js 18+
-- Java 17+
-- Maven 3.6+
+- TMDb APIキー（映画データ取得用）
 
-### 環境変数設定
-1. `.env`ファイルを作成（既存のものを確認）:
+### 手動セットアップ
 ```bash
-# TMDb API設定（必須）
-TMDB_API_KEY=your_tmdb_api_key_here
-TMDB_BASE_URL=https://api.themoviedb.org/3
+# 1. 環境変数ファイルを作成
+cp .env.example .env
 
-# データベース設定
-POSTGRES_DB=cinetrack
-POSTGRES_USER=cinetrack_user
-POSTGRES_PASSWORD=cinetrack123
+# 2. .envファイルでTMDb APIキーを設定
+# TMDB_API_KEY=your_actual_api_key_here
 
-# Spring Boot設定
-SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/cinetrack
-SPRING_DATASOURCE_USERNAME=cinetrack_user
-SPRING_DATASOURCE_PASSWORD=cinetrack123
+# 3. Docker環境起動
+docker compose up -d
 
-# JWT設定
-JWT_SECRET=mySecretKeyForCineTrackApplicationJWTSecurity123456789ABCDEFGHabcdefgh
-JWT_EXPIRATION=86400
-
-# React環境変数
-REACT_APP_API_BASE_URL=http://localhost:8080/api
-```
-
-### 開発環境起動
-
-#### 方法1: 開発用スクリプト（推奨）
-```bash
+# または開発モード
 ./start-dev.sh
 ```
 
-#### 方法2: Docker Compose（本番環境想定）
-```bash
-docker compose up -d
-```
+### 環境変数設定
+`.env`ファイルの主要設定項目：
 
-#### 方法3: 手動起動
-```bash
-# 1. PostgreSQL起動
-docker compose up -d db
+| 変数名 | 説明 | 必須 |
+|--------|------|------|
+| `TMDB_API_KEY` | TMDb API キー | ✅ |
+| `POSTGRES_PASSWORD` | DB パスワード | デフォルト値あり |
+| `JWT_SECRET` | JWT 秘密鍵 | デフォルト値あり |
 
-# 2. バックエンド起動
-cd backend
-TMDB_API_KEY=your_key TMDB_BASE_URL=https://api.themoviedb.org/3 mvn spring-boot:run
-
-# 3. フロントエンド起動
-cd frontend
-npm start
-```
+詳細は `.env.example` を参照してください。
 
 ## アクセス
 - **Frontend**: http://localhost:3000
