@@ -1,12 +1,12 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+このファイルは、Claude Code (claude.ai/code) がこのリポジトリで作業する際のガイダンスを提供します。
 
-## Project Overview
+## プロジェクト概要
 
 cineTrackは映画鑑賞記録Webアプリケーションです。TMDb APIを使用してトレンド映画を表示し、ユーザーが映画の鑑賞記録を管理できます。
 
-## Technology Stack
+## 技術スタック
 
 - **Backend**: Java 17 + Spring Boot 3.3.0 + Spring Security + JWT認証
 - **Frontend**: React + Material-UI + React Router + Axios
@@ -17,7 +17,7 @@ cineTrackは映画鑑賞記録Webアプリケーションです。TMDb APIを使
 - **Testing**: Jest + React Testing Library (frontend), JUnit + Mockito (backend)
 - **Build Tools**: Maven (backend), npm (frontend)
 
-## Project Structure
+## プロジェクト構成
 
 ```
 cineTrack/
@@ -46,7 +46,7 @@ cineTrack/
 └── start-dev.sh                # 開発環境起動スクリプト
 ```
 
-## Development Commands
+## 開発コマンド
 
 ### 初回セットアップ
 ```bash
@@ -87,15 +87,17 @@ docker-compose up -d db
 ```bash
 # フロントエンドテスト
 cd frontend
-npm test                    # インタラクティブモード
-npm run test:coverage      # カバレッジ付き実行
-npm run test:ci            # CI環境向け実行
+npm test                          # インタラクティブモード
+npm test -- --coverage --watchAll=false  # カバレッジ付きワンショット実行
+npm test -- --testNamePattern="specific test"  # 特定テスト実行
+npm test ComponentName.test.js   # 特定ファイルのテスト実行
 
-# バックエンドテスト
+# バックエンドテスト  
 cd backend
-mvn test                   # 全テスト実行
-mvn test -Dtest=ClassName  # 特定テストクラス実行
-mvn jacoco:report          # カバレッジレポート生成
+mvn test                         # 全テスト実行
+mvn test -Dtest=ClassName        # 特定テストクラス実行
+mvn test -Dtest=ClassName#methodName  # 特定テストメソッド実行
+mvn jacoco:report                # カバレッジレポート生成 (target/site/jacoco/)
 ```
 
 ### ビルド・デプロイ
@@ -125,45 +127,44 @@ docker-compose up -d db
 # Hibernate auto-ddl でスキーマ自動更新
 ```
 
-## Architecture Notes
+## アーキテクチャ概要
 
-### Backend (Spring Boot)
-- **Port**: 8080
-- **Base URL**: http://localhost:8080/api
-- **Authentication**: JWT with Spring Security
-- **Database**: PostgreSQL with JPA/Hibernate
-- **API Documentation**: REST endpoints in controllers
-- **Security**: CORS enabled, JWT token validation
-- **Key Endpoints**:
-  - `/auth/login` - ユーザーログイン
-  - `/auth/register` - ユーザー登録
-  - `/auth/me` - 現在のユーザー情報
-  - `/movies/**` - 映画関連API
-  - `/viewing-records/**` - 鑑賞記録API
+### バックエンド (Spring Boot)
+- **ポート**: 8080
+- **ベースURL**: http://localhost:8080/api
+- **認証**: JwtAuthenticationFilterを使用したJWT + Spring Security認証
+- **データベース**: PostgreSQL + JPA/Hibernate
+- **セキュリティ**: CORS有効、JWT トークン検証、Authorization ヘッダーでBearer トークン
+- **APIレスポンス形式**: success/message/dataフィールドを持つ標準化されたApiResponse<T>ラッパー
+- **コントローラー**: 8つのメインコントローラー (Auth, Movie, ViewingRecord, Social, User, Wishlist, Stats, Theater)
+- **主要アーキテクチャパターン**: レイヤード構成 (Controller → Service → Repository → Entity)
+- **外部API連携**: WebFluxを使用したリアクティブなTMDb API統合
 
-### Frontend (React)
-- **Port**: 3000
-- **Base URL**: http://localhost:3000
-- **API Communication**: Axios with interceptors
-- **State Management**: React Context (AuthContext)
-- **Routing**: React Router with protected routes
-- **UI Framework**: Material-UI
-- **Key Components**:
-  - `AuthContext` - 認証状態管理 (context/AuthContext.js:5)
-  - `ProtectedRoute` - 認証保護ルート
-  - `Navbar` - ナビゲーション
-  - Movie pages (Dashboard, Movies, Statistics)
+### フロントエンド (React)
+- **ポート**: 3000
+- **ベースURL**: http://localhost:3000
+- **API通信**: Bearer トークン認証を使用したAxios
+- **状態管理**: 認証用のReact Context (AuthContext)
+- **ルーティング**: ProtectedRoute ラッパーを使用したReact Router v7.6.3
+- **UIフレームワーク**: Netflixインスパイアドダークテーマを適用したMaterial-UI v7.2.0
+- **主要アーキテクチャ**:
+  - `AuthContext` - グローバル認証状態 (localStorage トークン管理)
+  - `ProtectedRoute` - 認証ページ用のルートガード
+  - `pages/` - メインアプリケーションページ (合計14ページ)
+  - `components/` - パフォーマンス最適化された再利用可能UIコンポーネント
+  - `hooks/` - 標準化されたAPI操作用のuseApiCallなどのカスタムフック
 
-### Database Schema
-主要テーブル:
-- `users` - ユーザー情報（username, email, password）
-- `movies` - 映画情報（TMDb連携）
-- `viewing_records` - 鑑賞記録（評価・鑑賞日・劇場）
-- `theaters` - 劇場情報
-- `user_follows` - フォロー関係
-- `wishlists` - ウィッシュリスト
+### データベーススキーマ
+Hibernate auto-DDLスキーマ生成を使用したJPAエンティティ:
+- `users` - ユーザー認証とプロフィール (UserDetails実装)
+- `viewing_records` - 評価、レビュー、劇場情報を含む映画鑑賞履歴
+- `theaters` - 位置検索機能付きの映画館/劇場マスターデータ
+- `follows` - ユーザー間のソーシャルフォロー関係
+- `wishlists` - TMDb映画参照を含むユーザーの映画ウィッシュリスト
 
-### Key Features
+主要な関係性: User 1:N ViewingRecord, User 1:N Wishlist, Theater 1:N ViewingRecord
+
+### 主要機能
 1. **認証機能**: JWT認証、ユーザー登録・ログイン (AuthController.java:34)
 2. **映画検索**: TMDb API連携、トレンド映画表示
 3. **鑑賞記録管理**: CRUD操作、評価・劇場情報記録
@@ -172,7 +173,7 @@ docker-compose up -d db
 6. **劇場検索**: 地域別劇場検索機能
 7. **ウィッシュリスト**: 観たい映画管理
 
-## Environment Variables
+## 環境変数
 
 必須の環境変数（`.env`ファイルに設定）:
 ```bash
@@ -196,64 +197,69 @@ CORS_ALLOWED_ORIGINS=http://localhost:3000
 REACT_APP_API_BASE_URL=http://localhost:8080/api
 ```
 
-## Testing Guidelines
+## テストガイドライン
 
 ### フロントエンド
-- **フレームワーク**: Jest + React Testing Library
-- **カバレッジ目標**: 90%+ statements, 80%+ branches
-- **テスト方針**: 統合テスト重視、ユーザー行動のテスト
-- **モック**: API レスポンス、外部ライブラリ
-- **現在のカバレッジ**: 90%+ statements, 82%+ branches (安定状態)
+- **フレームワーク**: Jest + React Testing Library + @testing-library/user-event
+- **カバレッジ目標**: 90%+ statements, 80%+ branches (現在達成済み)
+- **テスト方針**: ユーザー中心の統合テスト、実装詳細の回避
+- **モック戦略**: `__mocks__/axios.js`でAPIレスポンスをモック、`__mocks__/react-router-dom.js`でReact Routerをモック
+- **テストユーティリティ**: AuthContextプロバイダー付きのカスタムレンダー関数
+- **重要な注意**: Material-UIコンポーネントはwaitFor/actでの適切な非同期処理が必要
 
 ### バックエンド
-- **フレームワーク**: JUnit 5 + Mockito 5.14.0 (pom.xml:120)
-- **カバレッジ目標**: 95%+ instructions, 90%+ branches
-- **テスト方針**: 単体テスト + 統合テスト
-- **データベース**: H2 in-memory database for testing (pom.xml:52)
+- **フレームワーク**: JUnit 5 + Mockito + Spring Boot Test
+- **カバレッジ目標**: 95%+ instructions, 90%+ branches (現在達成済み)
+- **テスト戦略**: サービスの単体テスト、@WebMvcTestを使用したコントローラーの統合テスト
+- **データベース**: テスト用H2インメモリ、TestContainersパターンは未使用
+- **テスト設定**: 認証テスト用のカスタムTestUserDetailsとTestUserDetailsArgumentResolver
 
-## API Integration
+## API統合
 
 ### TMDb API
 - **Base URL**: https://api.themoviedb.org/3
-- **Key Endpoints**: 
+- **主要エンドポイント**: 
   - `/trending/movie/day` - 日次トレンド
   - `/search/movie` - 映画検索
   - `/movie/{id}` - 映画詳細
-- **Authentication**: API Key in query parameter
+- **認証**: クエリパラメータでAPIキー
 
-### Internal APIs
-- **Base URL**: http://localhost:8080/api (application.yml:34)
-- **Authentication**: JWT Bearer Token (AuthController.java:46)
-- **Response Format**: 標準化されたAPIレスポンス（ApiResponse<T>）
+### 内部API
+- **Base URL**: http://localhost:8080/api
+- **認証**: Authorization ヘッダーでJWT Bearer Token
+- **レスポンス形式**: success/message/dataフィールドを持つ標準化されたApiResponse<T>
+- **エラーハンドリング**: 適切なHTTPステータスコードでのグローバル例外処理
+- **API数**: 8つのコントローラーで51エンドポイント (docs/04_rest_api_specification.md参照)
 
-## Common Issues & Solutions
+## よくある問題と解決方法
 
-### Development
-- **CORS エラー**: backend の CORS 設定確認 (application.yml:47)
-- **JWT トークンエラー**: localStorage の token 確認 (AuthContext.js:16)
-- **TMDb API エラー**: API キーの有効性確認
-- **データベース接続エラー**: PostgreSQL コンテナの起動確認
+### 開発時
+- **CORS エラー**: backendのCORS設定確認 (application.yml:47)
+- **JWT トークンエラー**: localStorageのtoken確認 (AuthContext.js:16)
+- **TMDb API エラー**: APIキーの有効性確認
+- **データベース接続エラー**: PostgreSQLコンテナの起動確認
 
-### Testing
+### テスト時
 - **Material-UI テストエラー**: モックの適切な設定
-- **非同期テストエラー**: waitFor, act の適切な使用
+- **非同期テストエラー**: waitFor, actの適切な使用
 - **カバレッジ低下**: 不要なファイルの除外設定
 
-### Deployment
+### デプロイ時
 - **環境変数設定**: 本番環境での適切な設定
 - **HTTPS対応**: 本番環境でのTLS設定
 
-## Development Tools & Scripts
+## 開発ツール・スクリプト
 
-### Setup Scripts
-- **setup.sh**: 初回開発環境セットアップ（TMDb API キー設定含む）
+### セットアップスクリプト
+- **setup.sh**: 初回開発環境セットアップ（TMDb APIキー設定含む）
 - **start-dev.sh**: 統合開発環境起動スクリプト
 
-### Key Dependencies
+### 主要依存関係
 - **Backend**: Spring Boot 3.3.0, Java 17, PostgreSQL, JWT (pom.xml)
 - **Frontend**: React, Material-UI, React Router, Axios (package.json)
 
-### Code Quality
-- **Backend**: JaCoCo test coverage plugin (pom.xml:199)
-- **Frontend**: Jest coverage reports
-- **Linting**: Configuration in package.json scripts
+### コード品質・ドキュメント
+- **Backend**: JaCoCo テストカバレッジプラグインでtarget/site/jacoco/にレポート生成
+- **Frontend**: coverage/ディレクトリにJestカバレッジレポート
+- **設計ドキュメント**: docs/ディレクトリに包括的な設計書 (8つの仕様ファイル)
+- **APIドキュメント**: 51エンドポイントを網羅した完全なREST API仕様書
