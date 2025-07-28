@@ -33,9 +33,9 @@ server:
   servlet:
     context-path: /api
 
-# JWT設定
+# JWT設定 (本番環境では必ずJWT_SECRET環境変数を設定してください)
 jwt:
-  secret: ${JWT_SECRET:mySecretKeyForCineTrackApplicationMustBe256BitsLongForSecurity}
+  secret: ${JWT_SECRET:cinetrack-jwt-secret-key-change-in-production-256-bits-required-abcdef123456}
   expiration: ${JWT_EXPIRATION:86400}
 
 # TMDb API設定
