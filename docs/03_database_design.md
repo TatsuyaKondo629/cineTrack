@@ -54,7 +54,7 @@ erDiagram
         varchar movie_title "NOT NULL, SIZE(255)"
         varchar movie_poster_path "URL"
         timestamp viewing_date "NOT NULL"
-        decimal rating "NOT NULL, RANGE(0.5-5.0)"
+        double rating "NOT NULL, RANGE(0.5-5.0)"
         varchar theater "SIZE(255)"
         bigint theater_id FK "NULL"
         varchar screening_format "SIZE(50)"
@@ -70,11 +70,11 @@ erDiagram
         varchar location "NULL"
         varchar address "NULL"
         varchar phone "NULL"
-        varchar website "URL"
+        varchar website "NULL"
         varchar prefecture "NULL"
         varchar city "NULL"
-        decimal latitude "GPS Coordinate"
-        decimal longitude "GPS Coordinate"
+        double latitude "GPS Coordinate"
+        double longitude "GPS Coordinate"
         boolean is_active "DEFAULT TRUE"
         timestamp created_at "NOT NULL"
         timestamp updated_at "NOT NULL"
@@ -94,8 +94,8 @@ erDiagram
         varchar movie_title "NOT NULL, SIZE(255)"
         varchar movie_poster_path "URL"
         text movie_overview "TEXT"
-        varchar movie_release_date "DATE"
-        decimal movie_vote_average "TMDb Rating"
+        varchar movie_release_date "VARCHAR(255)"
+        double movie_vote_average "TMDb Rating"
         timestamp created_at "NOT NULL, updatable=false"
         timestamp updated_at "NULL"
     }
@@ -145,7 +145,7 @@ graph TB
 
 ### 3.1 users テーブル
 
-**エンティティファイル**: `User.java:15-70`
+**エンティティファイル**: `User.java:14-173`
 
 | カラム名 | データ型 | 制約 | デフォルト | 説明 |
 |---------|---------|-----|-----------|------|
@@ -160,14 +160,16 @@ graph TB
 | updated_at | TIMESTAMP | NOT NULL | CURRENT_TIMESTAMP | 更新日時 |
 
 #### バリデーション詳細
-- **username**: `@NotBlank @Size(min = 3, max = 50)` (User.java:22-25)
-- **email**: `@NotBlank @Email` (User.java:27-30)
+- **username**: `@NotBlank @Size(min = 3, max = 50)` (User.java:22-24)
+- **email**: `@NotBlank @Email` (User.java:27-29)
 - **password**: `@NotBlank @Size(min = 6)` (User.java:32-34)
+- **displayName**: `@Size(max = 50)` (User.java:36-37)
+- **bio**: `@Size(max = 500)` (User.java:40-41)
 - **Spring Security**: UserDetails実装 (User.java:16)
 
 ### 3.2 viewing_records テーブル
 
-**エンティティファイル**: `ViewingRecord.java:11-66`
+**エンティティファイル**: `ViewingRecord.java:10-193`
 
 | カラム名 | データ型 | 制約 | デフォルト | 説明 |
 |---------|---------|-----|-----------|------|
@@ -177,7 +179,7 @@ graph TB
 | movie_title | VARCHAR(255) | NOT NULL | - | 映画タイトル |
 | movie_poster_path | VARCHAR(255) | NULL | - | ポスター画像パス |
 | viewing_date | TIMESTAMP | NOT NULL | - | 鑑賞日時 |
-| rating | DECIMAL(2,1) | NOT NULL, 0.5-5.0 | - | 評価（0.5刻み） |
+| rating | DOUBLE | NOT NULL, 0.5-5.0 | - | 評価（0.5刻み） |
 | theater | VARCHAR(255) | NULL | - | 劇場名（テキスト） |
 | theater_id | BIGINT | FOREIGN KEY, NULL | - | 劇場エンティティID |
 | screening_format | VARCHAR(50) | NULL | - | 上映形式（IMAX等） |
@@ -186,30 +188,39 @@ graph TB
 | updated_at | TIMESTAMP | NULL | - | 更新日時 |
 
 #### バリデーション詳細
-- **rating**: `@DecimalMin("0.5") @DecimalMax("5.0")` (ViewingRecord.java:39-43)
-- **review**: `@Size(max = 2000)` (ViewingRecord.java:58-60)
+- **tmdbMovieId**: `@NotNull` (ViewingRecord.java:24-25)
+- **movieTitle**: `@NotBlank @Size(max = 255)` (ViewingRecord.java:28-30)
+- **viewingDate**: `@NotNull` (ViewingRecord.java:36)
+- **rating**: `@NotNull @DecimalMin("0.5") @DecimalMax("5.0")` (ViewingRecord.java:40-43)
+- **theater**: `@Size(max = 255)` (ViewingRecord.java:46)
+- **screeningFormat**: `@Size(max = 50)` (ViewingRecord.java:55)
+- **review**: `@Size(max = 2000)` (ViewingRecord.java:59)
 - **JSON処理**: `@JsonBackReference` でUser関係の循環参照回避 (ViewingRecord.java:20)
 
 ### 3.3 theaters テーブル
 
-**エンティティファイル**: `Theater.java:9-54`
+**エンティティファイル**: `Theater.java:8-208`
 
 | カラム名 | データ型 | 制約 | デフォルト | 説明 |
 |---------|---------|-----|-----------|------|
 | id | BIGINT | PRIMARY KEY, IDENTITY | AUTO | 劇場ID |
 | name | VARCHAR(255) | NOT NULL | - | 劇場名 |
-| chain | VARCHAR(100) | NULL | - | チェーン名（TOHOシネマズ等） |
+| chain | VARCHAR(255) | NULL | - | チェーン名（TOHOシネマズ等） |
 | location | VARCHAR(255) | NULL | - | 場所詳細 |
-| address | VARCHAR(500) | NULL | - | 住所 |
-| phone | VARCHAR(20) | NULL | - | 電話番号 |
+| address | VARCHAR(255) | NULL | - | 住所 |
+| phone | VARCHAR(255) | NULL | - | 電話番号 |
 | website | VARCHAR(255) | NULL | - | ウェブサイトURL |
-| prefecture | VARCHAR(50) | NULL | - | 都道府県 |
-| city | VARCHAR(100) | NULL | - | 市区町村 |
-| latitude | DECIMAL(10,8) | NULL | - | 緯度（GPS座標） |
-| longitude | DECIMAL(11,8) | NULL | - | 経度（GPS座標） |
+| prefecture | VARCHAR(255) | NULL | - | 都道府県 |
+| city | VARCHAR(255) | NULL | - | 市区町村 |
+| latitude | DOUBLE | NULL | - | 緯度（GPS座標） |
+| longitude | DOUBLE | NULL | - | 経度（GPS座標） |
 | is_active | BOOLEAN | NOT NULL | TRUE | アクティブフラグ |
 | created_at | TIMESTAMP | NOT NULL | CURRENT_TIMESTAMP | 作成日時 |
 | updated_at | TIMESTAMP | NOT NULL | CURRENT_TIMESTAMP | 更新日時 |
+
+#### バリデーション詳細
+- **name**: `@NotBlank` (Theater.java:17)
+- **isActive**: デフォルト値 `true` (Theater.java:48)
 
 #### 検索機能
 - **地域検索**: prefecture, city による絞り込み
@@ -218,7 +229,7 @@ graph TB
 
 ### 3.4 follows テーブル
 
-**エンティティファイル**: `Follow.java:8-28`
+**エンティティファイル**: `Follow.java:8-95`
 
 | カラム名 | データ型 | 制約 | デフォルト | 説明 |
 |---------|---------|-----|-----------|------|
@@ -229,12 +240,13 @@ graph TB
 
 #### 制約詳細
 - **複合ユニーク制約**: `(follower_id, following_id)` - 重複フォロー防止 (Follow.java:9-10)
+- **JSON処理**: `@JsonBackReference` で循環参照回避 (Follow.java:19, 24)
 - **自己参照防止**: アプリケーションレベルで制御
 - **相互フォロー**: 別レコードで管理
 
 ### 3.5 wishlist テーブル
 
-**エンティティファイル**: `Wishlist.java:9-49`
+**エンティティファイル**: `Wishlist.java:9-155`
 
 | カラム名 | データ型 | 制約 | デフォルト | 説明 |
 |---------|---------|-----|-----------|------|
@@ -244,10 +256,15 @@ graph TB
 | movie_title | VARCHAR(255) | NOT NULL | - | 映画タイトル |
 | movie_poster_path | VARCHAR(255) | NULL | - | ポスター画像パス |
 | movie_overview | TEXT | NULL | - | 映画概要 |
-| movie_release_date | VARCHAR(20) | NULL | - | 公開日 |
-| movie_vote_average | DECIMAL(3,1) | NULL | - | TMDb平均評価 |
+| movie_release_date | VARCHAR(255) | NULL | - | 公開日 |
+| movie_vote_average | DOUBLE | NULL | - | TMDb平均評価 |
 | created_at | TIMESTAMP | NOT NULL, 更新不可 | CURRENT_TIMESTAMP | 追加日時 |
 | updated_at | TIMESTAMP | NULL | - | 更新日時 |
+
+#### バリデーション詳細
+- **tmdbMovieId**: `@NotNull` (Wishlist.java:25)
+- **movieTitle**: `@NotBlank @Size(max = 255)` (Wishlist.java:29-30)
+- **JSON処理**: `@JsonBackReference` でUser関係の循環参照回避 (Wishlist.java:21)
 
 #### 制約詳細
 - **複合ユニーク制約**: `(user_id, tmdb_movie_id)` - 重複登録防止 (Wishlist.java:10-12)

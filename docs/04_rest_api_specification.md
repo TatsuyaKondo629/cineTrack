@@ -206,7 +206,41 @@ GET /movies/trending?page={page}
 
 参照: `MovieController.java:20-31`
 
-### 3.2 映画検索
+### 3.2 人気映画取得
+
+```http
+GET /movies/popular?page={page}
+```
+
+**説明**: TMDb APIから人気映画一覧を取得
+
+**認証**: 不要
+
+**クエリパラメータ**:
+- `page` (任意): ページ番号 (デフォルト: 1)
+
+**レスポンス例**: トレンド映画と同じ形式
+
+参照: `MovieController.java:33-43`
+
+### 3.3 現在上映中映画取得
+
+```http
+GET /movies/now-playing?page={page}
+```
+
+**説明**: TMDb APIから現在上映中の映画一覧を取得
+
+**認証**: 不要
+
+**クエリパラメータ**:
+- `page` (任意): ページ番号 (デフォルト: 1)
+
+**レスポンス例**: トレンド映画と同じ形式
+
+参照: `MovieController.java:45-55`
+
+### 3.4 映画検索
 
 ```http
 GET /movies/search?query={query}&page={page}
@@ -224,7 +258,7 @@ GET /movies/search?query={query}&page={page}
 
 参照: `MovieController.java:57-73`
 
-### 3.3 映画詳細取得
+### 3.5 映画詳細取得
 
 ```http
 GET /movies/{movieId}
@@ -768,20 +802,18 @@ DELETE /wishlist/remove/{tmdbMovieId}
 
 参照: `WishlistController.java:81-98`
 
-## 7. 統計情報API
-
-### 7.1 月別統計
+### 6.4 ウィッシュリスト存在チェック
 
 ```http
-GET /stats/monthly?year={year}
+GET /wishlist/check/{tmdbMovieId}
 ```
 
-**説明**: 指定された年の月別鑑賞統計を取得
+**説明**: 指定された映画がウィッシュリストに存在するかチェック
 
 **認証**: 必要
 
-**クエリパラメータ**:
-- `year` (任意): 年 (デフォルト: 現在の年)
+**パスパラメータ**:
+- `tmdbMovieId`: TMDb映画ID
 
 **レスポンス例**:
 
@@ -789,7 +821,149 @@ GET /stats/monthly?year={year}
 ```json
 {
   "success": true,
-  "message": "Monthly stats retrieved successfully",
+  "message": "Wishlist check completed",
+  "data": {
+    "inWishlist": true
+  }
+}
+```
+
+### 6.5 ウィッシュリスト件数取得
+
+```http
+GET /wishlist/count
+```
+
+**説明**: ユーザーのウィッシュリスト件数を取得
+
+**認証**: 必要
+
+**レスポンス例**:
+
+✅ **200 OK**
+```json
+{
+  "success": true,
+  "message": "Wishlist count retrieved",
+  "data": {
+    "count": 15
+  }
+}
+```
+
+### 6.6 ウィッシュリスト全削除
+
+```http
+DELETE /wishlist/clear
+```
+
+**説明**: ユーザーのウィッシュリストを全削除
+
+**認証**: 必要
+
+**レスポンス例**:
+
+✅ **200 OK**
+```json
+{
+  "success": true,
+  "message": "Wishlist cleared successfully",
+  "data": null
+}
+```
+
+## 7. ユーザー管理API
+
+### 7.1 現在ユーザープロフィール取得
+
+```http
+GET /users/profile
+```
+
+**説明**: 現在ログイン中のユーザーのプロフィール情報を取得
+
+**認証**: 必要
+
+**レスポンス例**:
+
+✅ **200 OK**
+```json
+{
+  "success": true,
+  "message": "プロフィールを取得しました",
+  "data": {
+    "id": 1,
+    "username": "user123",
+    "displayName": "ユーザー太郎",
+    "bio": "映画好きです",
+    "avatarUrl": null,
+    "followerCount": 10,
+    "followingCount": 5,
+    "totalMovieCount": 25,
+    "averageRating": 4.2
+  }
+}
+```
+
+参照: `UserController.java:30-45`
+
+### 7.2 ユーザープロフィール更新
+
+```http
+PUT /users/profile
+```
+
+**説明**: 現在ユーザーのプロフィール情報を更新
+
+**認証**: 必要
+
+**リクエストボディ**:
+```json
+{
+  "displayName": "string (任意, 最大100文字)",
+  "bio": "string (任意, 最大500文字)",
+  "avatarUrl": "string (任意)"
+}
+```
+
+**レスポンス例**:
+
+✅ **200 OK**
+```json
+{
+  "success": true,
+  "message": "プロフィールを更新しました",
+  "data": {
+    "id": 1,
+    "username": "user123",
+    "displayName": "更新された表示名",
+    "bio": "更新された自己紹介",
+    "avatarUrl": "http://example.com/avatar.jpg"
+  }
+}
+```
+
+参照: `UserController.java:50-65`
+
+## 8. 統計情報API
+
+### 8.1 月別統計
+
+```http
+GET /stats/monthly
+```
+
+**説明**: ユーザーの月別鑑賞統計を取得
+
+**認証**: 必要
+
+**レスポンス例**:
+
+✅ **200 OK**
+```json
+{
+  "success": true,
+  "message": "月別統計を取得しました",
   "data": [
     {
       "month": 1,
@@ -809,7 +983,77 @@ GET /stats/monthly?year={year}
 
 参照: `StatsController.java:28-41`
 
-### 7.2 全体統計
+### 8.2 ジャンル統計
+
+```http
+GET /stats/genres
+```
+
+**説明**: ユーザーのジャンル別鑑賞統計を取得
+
+**認証**: 必要
+
+**レスポンス例**:
+
+✅ **200 OK**
+```json
+{
+  "success": true,
+  "message": "ジャンル統計を取得しました",
+  "data": [
+    {
+      "genre": "アクション",
+      "movieCount": 25,
+      "averageRating": 4.1
+    },
+    {
+      "genre": "ドラマ",
+      "movieCount": 18,
+      "averageRating": 4.3
+    }
+  ]
+}
+```
+
+参照: `StatsController.java:43-56`
+
+### 8.3 評価分布統計
+
+```http
+GET /stats/ratings
+```
+
+**説明**: ユーザーの評価分布統計を取得
+
+**認証**: 必要
+
+**レスポンス例**:
+
+✅ **200 OK**
+```json
+{
+  "success": true,
+  "message": "評価分布を取得しました",
+  "data": [
+    {
+      "rating": 5.0,
+      "count": 15
+    },
+    {
+      "rating": 4.5,
+      "count": 22
+    },
+    {
+      "rating": 4.0,
+      "count": 18
+    }
+  ]
+}
+```
+
+参照: `StatsController.java:58-71`
+
+### 8.4 全体統計
 
 ```http
 GET /stats/overall
@@ -825,7 +1069,7 @@ GET /stats/overall
 ```json
 {
   "success": true,
-  "message": "Overall stats retrieved successfully",
+  "message": "全体統計を取得しました",
   "data": {
     "totalMovies": 150,
     "averageRating": 4.3,
@@ -840,9 +1084,37 @@ GET /stats/overall
 
 参照: `StatsController.java:73-86`
 
-## 8. 劇場情報API
+### 8.5 統計サマリー
 
-### 8.1 劇場検索
+```http
+GET /stats/summary
+```
+
+**説明**: 全ての統計情報を一括取得
+
+**認証**: 必要
+
+**レスポンス例**:
+
+✅ **200 OK**
+```json
+{
+  "success": true,
+  "message": "統計サマリーを取得しました",
+  "data": {
+    "overall": { /* 全体統計データ */ },
+    "monthly": [ /* 月別統計データ */ ],
+    "genres": [ /* ジャンル統計データ */ ],
+    "ratings": [ /* 評価分布データ */ ]
+  }
+}
+```
+
+参照: `StatsController.java:88-105`
+
+## 9. 劇場情報API
+
+### 9.1 劇場検索
 
 ```http
 GET /theaters/search?query={query}&prefecture={prefecture}&city={city}&chain={chain}&page={page}&size={size}
@@ -897,7 +1169,7 @@ GET /theaters/search?query={query}&prefecture={prefecture}&city={city}&chain={ch
 
 参照: `TheaterController.java:38-64`
 
-### 8.2 都道府県一覧
+### 9.2 都道府県一覧
 
 ```http
 GET /theaters/prefectures
@@ -935,9 +1207,9 @@ GET /theaters/prefectures
 
 参照: `TheaterController.java:87-96`
 
-## 9. エラーレスポンス
+## 10. エラーレスポンス
 
-### 9.1 バリデーションエラー
+### 10.1 バリデーションエラー
 
 ```json
 {
@@ -947,7 +1219,7 @@ GET /theaters/prefectures
 }
 ```
 
-### 9.2 認証エラー
+### 10.2 認証エラー
 
 ```json
 {
@@ -957,7 +1229,7 @@ GET /theaters/prefectures
 }
 ```
 
-### 9.3 認可エラー
+### 10.3 認可エラー
 
 ```json
 {
@@ -967,7 +1239,7 @@ GET /theaters/prefectures
 }
 ```
 
-### 9.4 リソース未発見
+### 10.4 リソース未発見
 
 ```json
 {
@@ -977,7 +1249,7 @@ GET /theaters/prefectures
 }
 ```
 
-### 9.5 サーバーエラー
+### 10.5 サーバーエラー
 
 ```json
 {
@@ -987,34 +1259,34 @@ GET /theaters/prefectures
 }
 ```
 
-## 10. レート制限・制約
+## 11. レート制限・制約
 
-### 10.1 ページネーション制限
+### 11.1 ページネーション制限
 
 - 最大ページサイズ: 100
 - デフォルトページサイズ: 10-20（エンドポイントによる）
 
-### 10.2 データ制限
+### 11.2 データ制限
 
 - 鑑賞記録レビュー: 最大2,000文字
 - ユーザー自己紹介: 最大500文字
 - 映画タイトル: 最大255文字
 
-### 10.3 JWT制限
+### 11.3 JWT制限
 
 - トークン有効期限: 24時間
 - リフレッシュ機能: 未実装（再ログインが必要）
 
-## 11. 外部API連携
+## 12. 外部API連携
 
-### 11.1 TMDb API連携
+### 12.1 TMDb API連携
 
 - **Base URL**: https://api.themoviedb.org/3
 - **認証**: APIキー認証
 - **レート制限**: TMDb側の制限に準拠
 - **キャッシュ**: 30分間のインメモリキャッシュ
 
-### 11.2 連携エンドポイント
+### 12.2 連携エンドポイント
 
 | cineTrack API | TMDb API | 説明 |
 |---------------|----------|------|
