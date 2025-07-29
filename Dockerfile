@@ -2,6 +2,13 @@ FROM openjdk:17-jdk-slim
 
 WORKDIR /app
 
+# デバッグ: ビルドコンテキストの内容を確認
+RUN echo "=== Checking build context ==="
+COPY . /debug
+RUN ls -la /debug
+RUN find /debug -name "mvnw" -type f
+RUN echo "=== End debug ==="
+
 # backend ディレクトリから必要なファイルをコピー
 COPY backend/mvnw ./mvnw
 COPY backend/.mvn ./.mvn
