@@ -1,0 +1,28 @@
+# フロントエンド関連ファイルを除外
+frontend/
+node_modules/
+
+# バックエンドビルドファイルを除外
+backend/target/
+backend/*.log
+
+# IDE設定ファイル
+.idea/
+.vscode/
+*.iml
+
+# OS固有ファイル
+.DS_Store
+Thumbs.db
+
+# Git関連
+.git/
+.gitignore
+
+# 一時ファイル
+*.tmp
+*.temp
+
+# Docker関連
+*.log
+dev.log
