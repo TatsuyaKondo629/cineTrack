@@ -2,21 +2,13 @@ FROM openjdk:17-jdk-slim
 
 WORKDIR /app
 
-# Mavenラッパーとpom.xmlをコピー
-COPY mvnw .
-COPY .mvn .mvn
-COPY pom.xml .
+# 必要なファイルをすべてコピー
+COPY . .
 
 # Mavenラッパーに実行権限を付与
 RUN chmod +x ./mvnw
 
-# 依存関係をダウンロード（キャッシュ効率化）
-RUN ./mvnw dependency:go-offline -B
-
-# ソースコードをコピー
-COPY src src
-
-# アプリケーションをビルド
+# 依存関係をダウンロードしてビルド
 RUN ./mvnw clean package -DskipTests
 
 # Railway対応: ポート環境変数の使用

@@ -1,0 +1,20 @@
+# ビルドファイルを除外
+target/
+*.log
+
+# IDE設定ファイル
+.idea/
+.vscode/
+*.iml
+
+# OS固有ファイル
+.DS_Store
+Thumbs.db
+
+# Git関連
+.git/
+.gitignore
+
+# 一時ファイル
+*.tmp
+*.temp
