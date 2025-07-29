@@ -2,8 +2,9 @@
 frontend/
 node_modules/
 
-# バックエンドビルドファイルを除外
-backend/target/
+# バックエンドビルドファイルを除外（JARファイルは除く）
+backend/target/*
+!backend/target/cinetrack-backend-0.0.1-SNAPSHOT.jar
 backend/*.log
 
 # IDE設定ファイル
