@@ -29,6 +29,8 @@ import {
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/api';
+
 const ProfileEdit = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
@@ -57,7 +59,7 @@ const ProfileEdit = () => {
       setError('');
       
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:8080/api/users/profile', {
+      const response = await axios.get(`${API_BASE_URL}/users/profile`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
@@ -141,7 +143,7 @@ const ProfileEdit = () => {
         updateData.currentPassword = formData.currentPassword;
       }
       
-      const response = await axios.put('http://localhost:8080/api/users/profile', updateData, {
+      const response = await axios.put(`${API_BASE_URL}/users/profile`, updateData, {
         headers: { Authorization: `Bearer ${token}` }
       });
       

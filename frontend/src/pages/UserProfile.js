@@ -36,6 +36,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { UserProfileSkeleton } from '../components/common/SkeletonLoader';
 import axios from 'axios';
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/api';
+
 const UserProfile = () => {
   const { userId } = useParams();
   const navigate = useNavigate();
@@ -52,7 +54,7 @@ const UserProfile = () => {
       setError('');
       
       const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:8080/api/social/users/${userId}`, {
+      const response = await axios.get(`${API_BASE_URL}/social/users/${userId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
@@ -76,7 +78,7 @@ const UserProfile = () => {
   const fetchFollowers = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:8080/api/social/users/${userId}/followers`, {
+      const response = await axios.get(`${API_BASE_URL}/social/users/${userId}/followers`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
@@ -91,7 +93,7 @@ const UserProfile = () => {
   const fetchFollowing = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:8080/api/social/users/${userId}/following`, {
+      const response = await axios.get(`${API_BASE_URL}/social/users/${userId}/following`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
@@ -110,7 +112,7 @@ const UserProfile = () => {
       
       await axios({
         method,
-        url: `http://localhost:8080/api/social/users/${userId}/follow`,
+        url: `${API_BASE_URL}/social/users/${userId}/follow`,
         headers: { Authorization: `Bearer ${token}` }
       });
       

@@ -37,6 +37,8 @@ import { useNavigate } from 'react-router-dom';
 import { ActivityListSkeleton } from '../components/common/SkeletonLoader';
 import axios from 'axios';
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/api';
+
 const ActivityFeed = () => {
   const navigate = useNavigate();
   const [activities, setActivities] = useState([]);
@@ -51,7 +53,7 @@ const ActivityFeed = () => {
       setError('');
       
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:8080/api/social/activities', {
+      const response = await axios.get(`${API_BASE_URL}/social/activities`, {
         headers: { Authorization: `Bearer ${token}` },
         params: { page: 0, size: 50 }
       });
