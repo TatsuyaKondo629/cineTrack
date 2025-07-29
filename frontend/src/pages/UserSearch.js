@@ -28,6 +28,8 @@ import {
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/api';
+
 const UserSearch = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [users, setUsers] = useState([]);
@@ -49,7 +51,7 @@ const UserSearch = () => {
         params.query = query.trim();
       }
       
-      const response = await axios.get('http://localhost:8080/api/social/users/search', {
+      const response = await axios.get(`${API_BASE_URL}/social/users/search`, {
         headers: { Authorization: `Bearer ${token}` },
         params
       });
@@ -76,7 +78,7 @@ const UserSearch = () => {
       
       await axios({
         method,
-        url: `http://localhost:8080/api/social/users/${userId}/follow`,
+        url: `${API_BASE_URL}/social/users/${userId}/follow`,
         headers: { Authorization: `Bearer ${token}` }
       });
       
