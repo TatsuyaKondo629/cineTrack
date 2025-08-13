@@ -1,7 +1,10 @@
 # マルチステージビルド: Mavenビルドステージ
-FROM maven:3.9.4-openjdk-17 AS build
+FROM eclipse-temurin:17-jdk AS build
 
 WORKDIR /app
+
+# Mavenをインストール
+RUN apt-get update && apt-get install -y maven && rm -rf /var/lib/apt/lists/*
 
 # pom.xmlとソースコードをコピー
 COPY backend/pom.xml .
@@ -10,8 +13,8 @@ COPY backend/src ./src
 # Mavenビルド実行（テストスキップでビルド時間短縮）
 RUN mvn clean package -DskipTests
 
-# 実行ステージ: 軽量なJDKイメージ
-FROM openjdk:17-jdk-slim
+# 実行ステージ: 軽量なJREイメージ
+FROM eclipse-temurin:17-jre
 
 WORKDIR /app
 
